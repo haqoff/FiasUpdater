@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="fias" Class="FIASClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=SCORPION;Initial Catalog=fias;User ID=admin" SettingsObjectName="FIASUpdater.Properties.Settings" SettingsPropertyName="fiasConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.ActualStatus" Member="ActualStatus">
+    <Type Name="ActualStatus">
+      <Column Name="ACTSTATID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UPDATES" Member="UPDATES">
+    <Type Name="UPDATES">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Version" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="FactUpdateDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AddressObjectType" Member="AddressObjectType">
+    <Type Name="AddressObjectType">
+      <Column Name="[LEVEL]" Member="LEVEL" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SCNAME" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="SOCRNAME" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="KOD_T_ST" Type="System.String" DbType="VarChar(4) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CenterStatus" Member="CenterStatus">
+    <Type Name="CenterStatus">
+      <Column Name="CENTERSTID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CurrentStatus" Member="CurrentStatus">
+    <Type Name="CurrentStatus">
+      <Column Name="CURENTSTID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EstateStatus" Member="EstateStatus">
+    <Type Name="EstateStatus">
+      <Column Name="ESTSTATID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="SHORTNAME" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FlatType" Member="FlatType">
+    <Type Name="FlatType">
+      <Column Name="FLTYPEID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="SHORTNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.House" Member="House">
+    <Type Name="House">
+      <Column Name="POSTALCODE" Type="System.String" DbType="VarChar(6)" CanBeNull="true" />
+      <Column Name="REGIONCODE" Type="System.String" DbType="VarChar(2)" CanBeNull="true" />
+      <Column Name="IFNSFL" Type="System.String" DbType="VarChar(4)" CanBeNull="true" />
+      <Column Name="TERRIFNSFL" Type="System.String" DbType="VarChar(4)" CanBeNull="true" />
+      <Column Name="IFNSUL" Type="System.String" DbType="VarChar(4)" CanBeNull="true" />
+      <Column Name="TERRIFNSUL" Type="System.String" DbType="VarChar(4)" CanBeNull="true" />
+      <Column Name="OKATO" Type="System.String" DbType="VarChar(11)" CanBeNull="true" />
+      <Column Name="OKTMO" Type="System.String" DbType="VarChar(11)" CanBeNull="true" />
+      <Column Name="UPDATEDATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="HOUSENUM" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="ESTSTATUS" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BUILDNUM" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="STRUCNUM" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="STRSTATUS" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HOUSEID" Type="System.String" DbType="VarChar(36) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="HOUSEGUID" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="AOGUID" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="STARTDATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="ENDDATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="STATSTATUS" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NORMDOC" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="COUNTER" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CADNUM" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="DIVTYPE" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.HouseStateStatus" Member="HouseStateStatus">
+    <Type Name="HouseStateStatus">
+      <Column Name="HOUSESTID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(60) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.IntervalStatus" Member="IntervalStatus">
+    <Type Name="IntervalStatus">
+      <Column Name="INTVSTATID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(60) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.NormativeDocument" Member="NormativeDocument">
+    <Type Name="NormativeDocument">
+      <Column Name="NORMDOCID" Type="System.String" DbType="VarChar(36) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DOCNAME" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="DOCDATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="DOCNUM" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="DOCTYPE" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DOCIMGID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.NormativeDocumentType" Member="NormativeDocumentType">
+    <Type Name="NormativeDocumentType">
+      <Column Name="NDTYPEID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(250) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Object" Member="Object">
+    <Type Name="Object">
+      <Column Name="AOGUID" Type="System.String" DbType="VarChar(36) NOT NULL" CanBeNull="false" />
+      <Column Name="FORMALNAME" Type="System.String" DbType="VarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="REGIONCODE" Type="System.String" DbType="VarChar(2) NOT NULL" CanBeNull="false" />
+      <Column Name="AUTOCODE" Type="System.String" DbType="VarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="AREACODE" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="CITYCODE" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="CTARCODE" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="PLACECODE" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="PLANCODE" Type="System.String" DbType="VarChar(4) NOT NULL" CanBeNull="false" />
+      <Column Name="STREETCODE" Type="System.String" DbType="VarChar(4)" CanBeNull="true" />
+      <Column Name="EXTRCODE" Type="System.String" DbType="VarChar(4) NOT NULL" CanBeNull="false" />
+      <Column Name="SEXTCODE" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="OFFNAME" Type="System.String" DbType="VarChar(120)" CanBeNull="true" />
+      <Column Name="POSTALCODE" Type="System.String" DbType="VarChar(6)" CanBeNull="true" />
+      <Column Name="IFNSFL" Type="System.String" DbType="VarChar(4)" CanBeNull="true" />
+      <Column Name="TERRIFNSFL" Type="System.String" DbType="VarChar(4)" CanBeNull="true" />
+      <Column Name="IFNSUL" Type="System.String" DbType="VarChar(4)" CanBeNull="true" />
+      <Column Name="TERRIFNSUL" Type="System.String" DbType="VarChar(4)" CanBeNull="true" />
+      <Column Name="OKATO" Type="System.String" DbType="VarChar(11)" CanBeNull="true" />
+      <Column Name="OKTMO" Type="System.String" DbType="VarChar(11)" CanBeNull="true" />
+      <Column Name="UPDATEDATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="SHORTNAME" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="AOLEVEL" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PARENTGUID" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="AOID" Type="System.String" DbType="VarChar(36) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PREVID" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="NEXTID" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="CODE" Type="System.String" DbType="VarChar(17)" CanBeNull="true" />
+      <Column Name="PLAINCODE" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+      <Column Name="ACTSTATUS" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CENTSTATUS" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OPERSTATUS" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CURRSTATUS" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="STARTDATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="ENDDATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="NORMDOC" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="LIVESTATUS" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="DIVTYPE" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OperationStatus" Member="OperationStatus">
+    <Type Name="OperationStatus">
+      <Column Name="OPERSTATID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Room" Member="Room">
+    <Type Name="Room">
+      <Column Name="ROOMGUID" Type="System.String" DbType="VarChar(36) NOT NULL" CanBeNull="false" />
+      <Column Name="FLATNUMBER" Type="System.String" DbType="VarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="FLATTYPE" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ROOMNUMBER" Type="System.String" DbType="VarChar(120)" CanBeNull="true" />
+      <Column Name="ROOMTYPE" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="REGIONCODE" Type="System.String" DbType="VarChar(2) NOT NULL" CanBeNull="false" />
+      <Column Name="POSTALCODE" Type="System.String" DbType="VarChar(6)" CanBeNull="true" />
+      <Column Name="UPDATEDATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="HOUSEGUID" Type="System.String" DbType="VarChar(36) NOT NULL" CanBeNull="false" />
+      <Column Name="ROOMID" Type="System.String" DbType="VarChar(36) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PREVID" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="NEXTID" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="STARTDATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="ENDDATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="LIVESTATUS" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="NORMDOC" Type="System.String" DbType="VarChar(36)" CanBeNull="true" />
+      <Column Name="OPERSTATUS" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CADNUM" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="ROOMCADNUM" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.RoomType" Member="RoomType">
+    <Type Name="RoomType">
+      <Column Name="RMTYPEID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="NVarChar(1000) NOT NULL" CanBeNull="false" />
+      <Column Name="SHORTNAME" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Stead" Member="Stead">
+    <Type Name="Stead">
+      <Column Name="STEADGUID" Type="System.String" DbType="NVarChar(1000) NOT NULL" CanBeNull="false" />
+      <Column Name="NUMBER" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="REGIONCODE" Type="System.String" DbType="NVarChar(1000) NOT NULL" CanBeNull="false" />
+      <Column Name="POSTALCODE" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="IFNSFL" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="TERRIFNSFL" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="IFNSUL" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="TERRIFNSUL" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="OKATO" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="OKTMO" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="UPDATEDATE" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="PARENTGUID" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="STEADID" Type="System.String" DbType="NVarChar(1000) NOT NULL" CanBeNull="false" />
+      <Column Name="PREVID" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="NEXTID" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="OPERSTATUS" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="STARTDATE" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ENDDATE" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="NORMDOC" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="LIVESTATUS" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="CADNUM" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="DIVTYPE" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StructureStatus" Member="StructureStatus">
+    <Type Name="StructureStatus">
+      <Column Name="STRSTATID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAME" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="SHORTNAME" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>
