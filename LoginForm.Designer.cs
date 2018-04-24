@@ -38,8 +38,6 @@
             this.btnLogin = new System.Windows.Forms.Button();
             this.tbMainDB = new System.Windows.Forms.TextBox();
             this.lblMainDB = new System.Windows.Forms.Label();
-            this.lblTempDB = new System.Windows.Forms.Label();
-            this.tbTempDB = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // tbServer
@@ -103,7 +101,7 @@
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(153, 167);
+            this.btnLogin.Location = new System.Drawing.Point(142, 135);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 7;
@@ -127,29 +125,11 @@
             this.lblMainDB.TabIndex = 9;
             this.lblMainDB.Text = "Имя основной БД:";
             // 
-            // lblTempDB
-            // 
-            this.lblTempDB.AutoSize = true;
-            this.lblTempDB.Location = new System.Drawing.Point(26, 139);
-            this.lblTempDB.Name = "lblTempDB";
-            this.lblTempDB.Size = new System.Drawing.Size(110, 13);
-            this.lblTempDB.TabIndex = 11;
-            this.lblTempDB.Text = "Имя временной БД:";
-            // 
-            // tbTempDB
-            // 
-            this.tbTempDB.Location = new System.Drawing.Point(142, 135);
-            this.tbTempDB.Name = "tbTempDB";
-            this.tbTempDB.Size = new System.Drawing.Size(213, 20);
-            this.tbTempDB.TabIndex = 10;
-            // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 198);
-            this.Controls.Add(this.lblTempDB);
-            this.Controls.Add(this.tbTempDB);
+            this.ClientSize = new System.Drawing.Size(384, 162);
             this.Controls.Add(this.lblMainDB);
             this.Controls.Add(this.tbMainDB);
             this.Controls.Add(this.btnLogin);
@@ -183,8 +163,6 @@
         private System.Windows.Forms.Button btnLogin;
         private System.Windows.Forms.TextBox tbMainDB;
         private System.Windows.Forms.Label lblMainDB;
-        private System.Windows.Forms.Label lblTempDB;
-        private System.Windows.Forms.TextBox tbTempDB;
     }
 }
 

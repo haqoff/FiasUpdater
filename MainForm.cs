@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SQLXMLBULKLOADLib;
+using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,12 +19,15 @@ namespace FIASUpdater
         private Dictionary<string, string> schemes;
         private Dictionary<string, string> versionFiles;
         private DateTime currentFiasVersion;
+        private string temp_connStringPart;
 
+        public object BundingFlags { get; private set; }
 
-        public MainForm(FIASClassesDataContext mainDB, FIASClassesDataContext tempDB)
+        public MainForm(FIASClassesDataContext mainDB, FIASClassesDataContext tempDB, string temp_connStringPart)
         {
             this.mainDB = mainDB;
             this.tempDB = tempDB;
+            this.temp_connStringPart = temp_connStringPart;
 
             versionFiles = new Dictionary<string, string>();
 
@@ -57,7 +62,7 @@ namespace FIASUpdater
             filesNamesMasks = filesNamesMasks.OrderByDescending(s => s.Length).ToList();
         }
 
-        private void MainForm_Load(object sender, System.EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
             var maxValue = mainDB.UPDATES.Max(x => x.Version);
             currentFiasVersion = mainDB.UPDATES.First(x => x.Version == maxValue).Version;
@@ -65,8 +70,60 @@ namespace FIASUpdater
             lblCurrentVersion.Text = "Текущая версия FIAS: " + currentFiasVersion.ToShortDateString();
         }
 
-        private void btnUpdate_Click(object sender, System.EventArgs e)
+        private void btnUpdate_Click(object sender, EventArgs e)
         {
+            if (tempDB.DatabaseExists()) tempDB.DeleteDatabase();
+            tempDB.CreateDatabase();
+
+            try
+            {
+                LoadXMLToTempDB();
+                Update(mainDB.ActualStatus, tempDB.ActualStatus,"");
+                tempDB.DeleteDatabase();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void Update(object main, object temp, string keyName)
+        {
+            System.Reflection.PropertyInfo[] props = main.GetType().GetProperties();
+
+            foreach (var item in props)
+            {
+                MessageBox.Show(item.Name);
+            }
+        }
+
+
+        [STAThread]
+        private void LoadXMLToTempDB()
+        {
+            try
+            {
+                var objBL = new SQLXMLBulkLoad4
+                {
+                    ConnectionString = temp_connStringPart,
+                    ErrorLogFile = "error.xml",
+                    SchemaGen = false,
+                    SGDropTables = false,
+                };
+                
+
+                foreach (var key in filesNamesMasks)
+                {
+                    var schemePath = schemes[key];
+                    var xmlPath = versionFiles[key];
+
+                    objBL.Execute(schemePath, xmlPath);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
 
         }
 
@@ -85,7 +142,7 @@ namespace FIASUpdater
                     btnUpdate.Enabled = false;
 
                     if (!UpdateFileDictionary(out schemes, fbd.SelectedPath, "*.xsd")) return;
-                   
+
                     tbSchemePath.Text = fbd.SelectedPath;
                     btnLoadNewVersion.Enabled = true;
                     if (!string.IsNullOrEmpty(tbSchemePath.Text) && !string.IsNullOrEmpty(tbNewVersionPath.Text)) btnUpdate.Enabled = true;
@@ -99,13 +156,13 @@ namespace FIASUpdater
         /// <param name="dict"></param>
         /// <param name="maskPostfix"></param>
         /// <returns>Возвращает true, если словарь был обновлён, иначе false.</returns>
-        private bool UpdateFileDictionary(out Dictionary<string,string> dict, string folderPath, string maskPostfix)
+        private bool UpdateFileDictionary(out Dictionary<string, string> dict, string folderPath, string maskPostfix)
         {
             dict = new Dictionary<string, string>();
             foreach (var mask in filesNamesMasks)
             {
                 var files = new List<string>();
-                files.AddRange(Directory.GetFiles(folderPath, mask +maskPostfix));
+                files.AddRange(Directory.GetFiles(folderPath, mask + maskPostfix));
 
                 if (files.Count > 1)
                 {
@@ -188,16 +245,16 @@ namespace FIASUpdater
                     if (CanBeUpdated(newVer)) lblReadyToUpdate.Visible = true;
                     else
                     {
-                        if(currentFiasVersion.CompareTo(newVer)>0)
+                        if (currentFiasVersion.CompareTo(newVer) > 0)
                             MessageBox.Show("База данных ФИАСа имеет более новую версию, чем ту, которую Вы пытаетесь загрузить.");
                         else
                             MessageBox.Show("Версия, которую вы пытаетесь загрузить слишком новая для текущий базы данных. Возможно вы пропустили некоторые обновления.");
                         return;
                     }
 
-                    
-                    if(!string.IsNullOrEmpty(tbSchemePath.Text) && !string.IsNullOrEmpty(tbNewVersionPath.Text)) btnUpdate.Enabled = true;
                     tbNewVersionPath.Text = fbd.SelectedPath;
+                    if (!string.IsNullOrEmpty(tbSchemePath.Text) && !string.IsNullOrEmpty(tbNewVersionPath.Text)) btnUpdate.Enabled = true;
+
                 }
             }
         }

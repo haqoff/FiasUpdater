@@ -80,6 +80,11 @@ namespace FIASUpdater
     partial void DeleteStructureStatus(StructureStatus instance);
     #endregion
 		
+		public FIASClassesDataContext() : 
+				base(global::FIASUpdater.Properties.Settings.Default.fiasConnectionString, mappingSource)
+		{
+			OnCreated();
+		}
 		
 		public FIASClassesDataContext(string connection) : 
 				base(connection, mappingSource)
