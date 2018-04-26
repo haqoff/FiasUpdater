@@ -36,11 +36,12 @@ namespace FIASUpdater
                 return;
             }
 
-            btnLogin.Enabled = true;
+            fiasDataContext.CommandTimeout = 0;
 
             var tempConnOleDBPart = String.Format("Provider=sqloledb;server={0};database={1};user id={2};password={3};persist security info=True;Connect Timeout=30", tbServer.Text, fias_tempName, tbUserName.Text, tbPassword.Text);
-
             MainForm form = new MainForm(fiasDataContext, fias_tempDataContext, tempConnOleDBPart);
+            btnLogin.Enabled = true;
+
             Hide();
             if (form.ShowDialog() != DialogResult.OK)
                 Close();

@@ -75,16 +75,16 @@ namespace FIASUpdater
     partial void InsertRoom(Room instance);
     partial void UpdateRoom(Room instance);
     partial void DeleteRoom(Room instance);
+    partial void InsertRoomType(RoomType instance);
+    partial void UpdateRoomType(RoomType instance);
+    partial void DeleteRoomType(RoomType instance);
     partial void InsertStructureStatus(StructureStatus instance);
     partial void UpdateStructureStatus(StructureStatus instance);
     partial void DeleteStructureStatus(StructureStatus instance);
+    partial void InsertStead(Stead instance);
+    partial void UpdateStead(Stead instance);
+    partial void DeleteStead(Stead instance);
     #endregion
-		
-		public FIASClassesDataContext() : 
-				base(global::FIASUpdater.Properties.Settings.Default.fiasConnectionString, mappingSource)
-		{
-			OnCreated();
-		}
 		
 		public FIASClassesDataContext(string connection) : 
 				base(connection, mappingSource)
@@ -238,19 +238,19 @@ namespace FIASUpdater
 			}
 		}
 		
-		public System.Data.Linq.Table<Stead> Stead
-		{
-			get
-			{
-				return this.GetTable<Stead>();
-			}
-		}
-		
 		public System.Data.Linq.Table<StructureStatus> StructureStatus
 		{
 			get
 			{
 				return this.GetTable<StructureStatus>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Stead> Stead
+		{
+			get
+			{
+				return this.GetTable<Stead>();
 			}
 		}
 	}
@@ -3562,8 +3562,10 @@ namespace FIASUpdater
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.RoomType")]
-	public partial class RoomType
+	public partial class RoomType : INotifyPropertyChanging, INotifyPropertyChanged
 	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _RMTYPEID;
 		
@@ -3571,11 +3573,24 @@ namespace FIASUpdater
 		
 		private string _SHORTNAME;
 		
+    #region Определения метода расширяемости
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnRMTYPEIDChanging(int value);
+    partial void OnRMTYPEIDChanged();
+    partial void OnNAMEChanging(string value);
+    partial void OnNAMEChanged();
+    partial void OnSHORTNAMEChanging(string value);
+    partial void OnSHORTNAMEChanged();
+    #endregion
+		
 		public RoomType()
 		{
+			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RMTYPEID", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RMTYPEID", DbType="Int NOT NULL", IsPrimaryKey=true)]
 		public int RMTYPEID
 		{
 			get
@@ -3586,12 +3601,16 @@ namespace FIASUpdater
 			{
 				if ((this._RMTYPEID != value))
 				{
+					this.OnRMTYPEIDChanging(value);
+					this.SendPropertyChanging();
 					this._RMTYPEID = value;
+					this.SendPropertyChanged("RMTYPEID");
+					this.OnRMTYPEIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NAME", DbType="NVarChar(1000) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NAME", DbType="VarChar(120) NOT NULL", CanBeNull=false)]
 		public string NAME
 		{
 			get
@@ -3602,12 +3621,16 @@ namespace FIASUpdater
 			{
 				if ((this._NAME != value))
 				{
+					this.OnNAMEChanging(value);
+					this.SendPropertyChanging();
 					this._NAME = value;
+					this.SendPropertyChanged("NAME");
+					this.OnNAMEChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SHORTNAME", DbType="NVarChar(1000)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SHORTNAME", DbType="VarChar(120)")]
 		public string SHORTNAME
 		{
 			get
@@ -3618,413 +3641,32 @@ namespace FIASUpdater
 			{
 				if ((this._SHORTNAME != value))
 				{
+					this.OnSHORTNAMEChanging(value);
+					this.SendPropertyChanging();
 					this._SHORTNAME = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Stead")]
-	public partial class Stead
-	{
-		
-		private string _STEADGUID;
-		
-		private string _NUMBER;
-		
-		private string _REGIONCODE;
-		
-		private string _POSTALCODE;
-		
-		private string _IFNSFL;
-		
-		private string _TERRIFNSFL;
-		
-		private string _IFNSUL;
-		
-		private string _TERRIFNSUL;
-		
-		private string _OKATO;
-		
-		private string _OKTMO;
-		
-		private System.DateTime _UPDATEDATE;
-		
-		private string _PARENTGUID;
-		
-		private string _STEADID;
-		
-		private string _PREVID;
-		
-		private string _NEXTID;
-		
-		private int _OPERSTATUS;
-		
-		private System.DateTime _STARTDATE;
-		
-		private System.DateTime _ENDDATE;
-		
-		private string _NORMDOC;
-		
-		private byte _LIVESTATUS;
-		
-		private string _CADNUM;
-		
-		private int _DIVTYPE;
-		
-		public Stead()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_STEADGUID", DbType="NVarChar(1000) NOT NULL", CanBeNull=false)]
-		public string STEADGUID
-		{
-			get
-			{
-				return this._STEADGUID;
-			}
-			set
-			{
-				if ((this._STEADGUID != value))
-				{
-					this._STEADGUID = value;
+					this.SendPropertyChanged("SHORTNAME");
+					this.OnSHORTNAMEChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NUMBER", DbType="NVarChar(1000)")]
-		public string NUMBER
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
 		{
-			get
+			if ((this.PropertyChanging != null))
 			{
-				return this._NUMBER;
-			}
-			set
-			{
-				if ((this._NUMBER != value))
-				{
-					this._NUMBER = value;
-				}
+				this.PropertyChanging(this, emptyChangingEventArgs);
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REGIONCODE", DbType="NVarChar(1000) NOT NULL", CanBeNull=false)]
-		public string REGIONCODE
+		protected virtual void SendPropertyChanged(String propertyName)
 		{
-			get
+			if ((this.PropertyChanged != null))
 			{
-				return this._REGIONCODE;
-			}
-			set
-			{
-				if ((this._REGIONCODE != value))
-				{
-					this._REGIONCODE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_POSTALCODE", DbType="NVarChar(1000)")]
-		public string POSTALCODE
-		{
-			get
-			{
-				return this._POSTALCODE;
-			}
-			set
-			{
-				if ((this._POSTALCODE != value))
-				{
-					this._POSTALCODE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IFNSFL", DbType="NVarChar(1000)")]
-		public string IFNSFL
-		{
-			get
-			{
-				return this._IFNSFL;
-			}
-			set
-			{
-				if ((this._IFNSFL != value))
-				{
-					this._IFNSFL = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TERRIFNSFL", DbType="NVarChar(1000)")]
-		public string TERRIFNSFL
-		{
-			get
-			{
-				return this._TERRIFNSFL;
-			}
-			set
-			{
-				if ((this._TERRIFNSFL != value))
-				{
-					this._TERRIFNSFL = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IFNSUL", DbType="NVarChar(1000)")]
-		public string IFNSUL
-		{
-			get
-			{
-				return this._IFNSUL;
-			}
-			set
-			{
-				if ((this._IFNSUL != value))
-				{
-					this._IFNSUL = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TERRIFNSUL", DbType="NVarChar(1000)")]
-		public string TERRIFNSUL
-		{
-			get
-			{
-				return this._TERRIFNSUL;
-			}
-			set
-			{
-				if ((this._TERRIFNSUL != value))
-				{
-					this._TERRIFNSUL = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OKATO", DbType="NVarChar(1000)")]
-		public string OKATO
-		{
-			get
-			{
-				return this._OKATO;
-			}
-			set
-			{
-				if ((this._OKATO != value))
-				{
-					this._OKATO = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OKTMO", DbType="NVarChar(1000)")]
-		public string OKTMO
-		{
-			get
-			{
-				return this._OKTMO;
-			}
-			set
-			{
-				if ((this._OKTMO != value))
-				{
-					this._OKTMO = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UPDATEDATE", DbType="DateTime NOT NULL")]
-		public System.DateTime UPDATEDATE
-		{
-			get
-			{
-				return this._UPDATEDATE;
-			}
-			set
-			{
-				if ((this._UPDATEDATE != value))
-				{
-					this._UPDATEDATE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PARENTGUID", DbType="NVarChar(1000)")]
-		public string PARENTGUID
-		{
-			get
-			{
-				return this._PARENTGUID;
-			}
-			set
-			{
-				if ((this._PARENTGUID != value))
-				{
-					this._PARENTGUID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_STEADID", DbType="NVarChar(1000) NOT NULL", CanBeNull=false)]
-		public string STEADID
-		{
-			get
-			{
-				return this._STEADID;
-			}
-			set
-			{
-				if ((this._STEADID != value))
-				{
-					this._STEADID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PREVID", DbType="NVarChar(1000)")]
-		public string PREVID
-		{
-			get
-			{
-				return this._PREVID;
-			}
-			set
-			{
-				if ((this._PREVID != value))
-				{
-					this._PREVID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NEXTID", DbType="NVarChar(1000)")]
-		public string NEXTID
-		{
-			get
-			{
-				return this._NEXTID;
-			}
-			set
-			{
-				if ((this._NEXTID != value))
-				{
-					this._NEXTID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OPERSTATUS", DbType="Int NOT NULL")]
-		public int OPERSTATUS
-		{
-			get
-			{
-				return this._OPERSTATUS;
-			}
-			set
-			{
-				if ((this._OPERSTATUS != value))
-				{
-					this._OPERSTATUS = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_STARTDATE", DbType="DateTime NOT NULL")]
-		public System.DateTime STARTDATE
-		{
-			get
-			{
-				return this._STARTDATE;
-			}
-			set
-			{
-				if ((this._STARTDATE != value))
-				{
-					this._STARTDATE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ENDDATE", DbType="DateTime NOT NULL")]
-		public System.DateTime ENDDATE
-		{
-			get
-			{
-				return this._ENDDATE;
-			}
-			set
-			{
-				if ((this._ENDDATE != value))
-				{
-					this._ENDDATE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NORMDOC", DbType="NVarChar(1000)")]
-		public string NORMDOC
-		{
-			get
-			{
-				return this._NORMDOC;
-			}
-			set
-			{
-				if ((this._NORMDOC != value))
-				{
-					this._NORMDOC = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LIVESTATUS", DbType="TinyInt NOT NULL")]
-		public byte LIVESTATUS
-		{
-			get
-			{
-				return this._LIVESTATUS;
-			}
-			set
-			{
-				if ((this._LIVESTATUS != value))
-				{
-					this._LIVESTATUS = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CADNUM", DbType="NVarChar(1000)")]
-		public string CADNUM
-		{
-			get
-			{
-				return this._CADNUM;
-			}
-			set
-			{
-				if ((this._CADNUM != value))
-				{
-					this._CADNUM = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DIVTYPE", DbType="Int NOT NULL")]
-		public int DIVTYPE
-		{
-			get
-			{
-				return this._DIVTYPE;
-			}
-			set
-			{
-				if ((this._DIVTYPE != value))
-				{
-					this._DIVTYPE = value;
-				}
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}
@@ -4114,6 +3756,572 @@ namespace FIASUpdater
 					this._SHORTNAME = value;
 					this.SendPropertyChanged("SHORTNAME");
 					this.OnSHORTNAMEChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Stead")]
+	public partial class Stead : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _STEADGUID;
+		
+		private string _NUMBER;
+		
+		private string _REGIONCODE;
+		
+		private string _POSTALCODE;
+		
+		private string _IFNSFL;
+		
+		private string _TERRIFNSFL;
+		
+		private string _IFNSUL;
+		
+		private string _TERRIFNSUL;
+		
+		private string _OKATO;
+		
+		private string _OKTMO;
+		
+		private System.DateTime _UPDATEDATE;
+		
+		private string _PARENTGUID;
+		
+		private string _STEADID;
+		
+		private string _PREVID;
+		
+		private string _NEXTID;
+		
+		private int _OPERSTATUS;
+		
+		private System.DateTime _STARTDATE;
+		
+		private System.DateTime _ENDDATE;
+		
+		private string _NORMDOC;
+		
+		private byte _LIVESTATUS;
+		
+		private string _CADNUM;
+		
+		private int _DIVTYPE;
+		
+    #region Определения метода расширяемости
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnSTEADGUIDChanging(string value);
+    partial void OnSTEADGUIDChanged();
+    partial void OnNUMBERChanging(string value);
+    partial void OnNUMBERChanged();
+    partial void OnREGIONCODEChanging(string value);
+    partial void OnREGIONCODEChanged();
+    partial void OnPOSTALCODEChanging(string value);
+    partial void OnPOSTALCODEChanged();
+    partial void OnIFNSFLChanging(string value);
+    partial void OnIFNSFLChanged();
+    partial void OnTERRIFNSFLChanging(string value);
+    partial void OnTERRIFNSFLChanged();
+    partial void OnIFNSULChanging(string value);
+    partial void OnIFNSULChanged();
+    partial void OnTERRIFNSULChanging(string value);
+    partial void OnTERRIFNSULChanged();
+    partial void OnOKATOChanging(string value);
+    partial void OnOKATOChanged();
+    partial void OnOKTMOChanging(string value);
+    partial void OnOKTMOChanged();
+    partial void OnUPDATEDATEChanging(System.DateTime value);
+    partial void OnUPDATEDATEChanged();
+    partial void OnPARENTGUIDChanging(string value);
+    partial void OnPARENTGUIDChanged();
+    partial void OnSTEADIDChanging(string value);
+    partial void OnSTEADIDChanged();
+    partial void OnPREVIDChanging(string value);
+    partial void OnPREVIDChanged();
+    partial void OnNEXTIDChanging(string value);
+    partial void OnNEXTIDChanged();
+    partial void OnOPERSTATUSChanging(int value);
+    partial void OnOPERSTATUSChanged();
+    partial void OnSTARTDATEChanging(System.DateTime value);
+    partial void OnSTARTDATEChanged();
+    partial void OnENDDATEChanging(System.DateTime value);
+    partial void OnENDDATEChanged();
+    partial void OnNORMDOCChanging(string value);
+    partial void OnNORMDOCChanged();
+    partial void OnLIVESTATUSChanging(byte value);
+    partial void OnLIVESTATUSChanged();
+    partial void OnCADNUMChanging(string value);
+    partial void OnCADNUMChanged();
+    partial void OnDIVTYPEChanging(int value);
+    partial void OnDIVTYPEChanged();
+    #endregion
+		
+		public Stead()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_STEADGUID", DbType="VarChar(36) NOT NULL", CanBeNull=false)]
+		public string STEADGUID
+		{
+			get
+			{
+				return this._STEADGUID;
+			}
+			set
+			{
+				if ((this._STEADGUID != value))
+				{
+					this.OnSTEADGUIDChanging(value);
+					this.SendPropertyChanging();
+					this._STEADGUID = value;
+					this.SendPropertyChanged("STEADGUID");
+					this.OnSTEADGUIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NUMBER", DbType="VarChar(120)")]
+		public string NUMBER
+		{
+			get
+			{
+				return this._NUMBER;
+			}
+			set
+			{
+				if ((this._NUMBER != value))
+				{
+					this.OnNUMBERChanging(value);
+					this.SendPropertyChanging();
+					this._NUMBER = value;
+					this.SendPropertyChanged("NUMBER");
+					this.OnNUMBERChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REGIONCODE", DbType="VarChar(2) NOT NULL", CanBeNull=false)]
+		public string REGIONCODE
+		{
+			get
+			{
+				return this._REGIONCODE;
+			}
+			set
+			{
+				if ((this._REGIONCODE != value))
+				{
+					this.OnREGIONCODEChanging(value);
+					this.SendPropertyChanging();
+					this._REGIONCODE = value;
+					this.SendPropertyChanged("REGIONCODE");
+					this.OnREGIONCODEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_POSTALCODE", DbType="VarChar(6)")]
+		public string POSTALCODE
+		{
+			get
+			{
+				return this._POSTALCODE;
+			}
+			set
+			{
+				if ((this._POSTALCODE != value))
+				{
+					this.OnPOSTALCODEChanging(value);
+					this.SendPropertyChanging();
+					this._POSTALCODE = value;
+					this.SendPropertyChanged("POSTALCODE");
+					this.OnPOSTALCODEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IFNSFL", DbType="VarChar(4)")]
+		public string IFNSFL
+		{
+			get
+			{
+				return this._IFNSFL;
+			}
+			set
+			{
+				if ((this._IFNSFL != value))
+				{
+					this.OnIFNSFLChanging(value);
+					this.SendPropertyChanging();
+					this._IFNSFL = value;
+					this.SendPropertyChanged("IFNSFL");
+					this.OnIFNSFLChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TERRIFNSFL", DbType="VarChar(4)")]
+		public string TERRIFNSFL
+		{
+			get
+			{
+				return this._TERRIFNSFL;
+			}
+			set
+			{
+				if ((this._TERRIFNSFL != value))
+				{
+					this.OnTERRIFNSFLChanging(value);
+					this.SendPropertyChanging();
+					this._TERRIFNSFL = value;
+					this.SendPropertyChanged("TERRIFNSFL");
+					this.OnTERRIFNSFLChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IFNSUL", DbType="VarChar(4)")]
+		public string IFNSUL
+		{
+			get
+			{
+				return this._IFNSUL;
+			}
+			set
+			{
+				if ((this._IFNSUL != value))
+				{
+					this.OnIFNSULChanging(value);
+					this.SendPropertyChanging();
+					this._IFNSUL = value;
+					this.SendPropertyChanged("IFNSUL");
+					this.OnIFNSULChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TERRIFNSUL", DbType="VarChar(4)")]
+		public string TERRIFNSUL
+		{
+			get
+			{
+				return this._TERRIFNSUL;
+			}
+			set
+			{
+				if ((this._TERRIFNSUL != value))
+				{
+					this.OnTERRIFNSULChanging(value);
+					this.SendPropertyChanging();
+					this._TERRIFNSUL = value;
+					this.SendPropertyChanged("TERRIFNSUL");
+					this.OnTERRIFNSULChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OKATO", DbType="VarChar(11)")]
+		public string OKATO
+		{
+			get
+			{
+				return this._OKATO;
+			}
+			set
+			{
+				if ((this._OKATO != value))
+				{
+					this.OnOKATOChanging(value);
+					this.SendPropertyChanging();
+					this._OKATO = value;
+					this.SendPropertyChanged("OKATO");
+					this.OnOKATOChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OKTMO", DbType="VarChar(11)")]
+		public string OKTMO
+		{
+			get
+			{
+				return this._OKTMO;
+			}
+			set
+			{
+				if ((this._OKTMO != value))
+				{
+					this.OnOKTMOChanging(value);
+					this.SendPropertyChanging();
+					this._OKTMO = value;
+					this.SendPropertyChanged("OKTMO");
+					this.OnOKTMOChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UPDATEDATE", DbType="Date NOT NULL")]
+		public System.DateTime UPDATEDATE
+		{
+			get
+			{
+				return this._UPDATEDATE;
+			}
+			set
+			{
+				if ((this._UPDATEDATE != value))
+				{
+					this.OnUPDATEDATEChanging(value);
+					this.SendPropertyChanging();
+					this._UPDATEDATE = value;
+					this.SendPropertyChanged("UPDATEDATE");
+					this.OnUPDATEDATEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PARENTGUID", DbType="VarChar(36)")]
+		public string PARENTGUID
+		{
+			get
+			{
+				return this._PARENTGUID;
+			}
+			set
+			{
+				if ((this._PARENTGUID != value))
+				{
+					this.OnPARENTGUIDChanging(value);
+					this.SendPropertyChanging();
+					this._PARENTGUID = value;
+					this.SendPropertyChanged("PARENTGUID");
+					this.OnPARENTGUIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_STEADID", DbType="VarChar(36) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string STEADID
+		{
+			get
+			{
+				return this._STEADID;
+			}
+			set
+			{
+				if ((this._STEADID != value))
+				{
+					this.OnSTEADIDChanging(value);
+					this.SendPropertyChanging();
+					this._STEADID = value;
+					this.SendPropertyChanged("STEADID");
+					this.OnSTEADIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PREVID", DbType="VarChar(36)")]
+		public string PREVID
+		{
+			get
+			{
+				return this._PREVID;
+			}
+			set
+			{
+				if ((this._PREVID != value))
+				{
+					this.OnPREVIDChanging(value);
+					this.SendPropertyChanging();
+					this._PREVID = value;
+					this.SendPropertyChanged("PREVID");
+					this.OnPREVIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NEXTID", DbType="VarChar(36)")]
+		public string NEXTID
+		{
+			get
+			{
+				return this._NEXTID;
+			}
+			set
+			{
+				if ((this._NEXTID != value))
+				{
+					this.OnNEXTIDChanging(value);
+					this.SendPropertyChanging();
+					this._NEXTID = value;
+					this.SendPropertyChanged("NEXTID");
+					this.OnNEXTIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OPERSTATUS", DbType="Int NOT NULL")]
+		public int OPERSTATUS
+		{
+			get
+			{
+				return this._OPERSTATUS;
+			}
+			set
+			{
+				if ((this._OPERSTATUS != value))
+				{
+					this.OnOPERSTATUSChanging(value);
+					this.SendPropertyChanging();
+					this._OPERSTATUS = value;
+					this.SendPropertyChanged("OPERSTATUS");
+					this.OnOPERSTATUSChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_STARTDATE", DbType="Date NOT NULL")]
+		public System.DateTime STARTDATE
+		{
+			get
+			{
+				return this._STARTDATE;
+			}
+			set
+			{
+				if ((this._STARTDATE != value))
+				{
+					this.OnSTARTDATEChanging(value);
+					this.SendPropertyChanging();
+					this._STARTDATE = value;
+					this.SendPropertyChanged("STARTDATE");
+					this.OnSTARTDATEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ENDDATE", DbType="Date NOT NULL")]
+		public System.DateTime ENDDATE
+		{
+			get
+			{
+				return this._ENDDATE;
+			}
+			set
+			{
+				if ((this._ENDDATE != value))
+				{
+					this.OnENDDATEChanging(value);
+					this.SendPropertyChanging();
+					this._ENDDATE = value;
+					this.SendPropertyChanged("ENDDATE");
+					this.OnENDDATEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NORMDOC", DbType="VarChar(36)")]
+		public string NORMDOC
+		{
+			get
+			{
+				return this._NORMDOC;
+			}
+			set
+			{
+				if ((this._NORMDOC != value))
+				{
+					this.OnNORMDOCChanging(value);
+					this.SendPropertyChanging();
+					this._NORMDOC = value;
+					this.SendPropertyChanged("NORMDOC");
+					this.OnNORMDOCChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LIVESTATUS", DbType="TinyInt NOT NULL")]
+		public byte LIVESTATUS
+		{
+			get
+			{
+				return this._LIVESTATUS;
+			}
+			set
+			{
+				if ((this._LIVESTATUS != value))
+				{
+					this.OnLIVESTATUSChanging(value);
+					this.SendPropertyChanging();
+					this._LIVESTATUS = value;
+					this.SendPropertyChanged("LIVESTATUS");
+					this.OnLIVESTATUSChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CADNUM", DbType="NVarChar(1000)")]
+		public string CADNUM
+		{
+			get
+			{
+				return this._CADNUM;
+			}
+			set
+			{
+				if ((this._CADNUM != value))
+				{
+					this.OnCADNUMChanging(value);
+					this.SendPropertyChanging();
+					this._CADNUM = value;
+					this.SendPropertyChanged("CADNUM");
+					this.OnCADNUMChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DIVTYPE", DbType="Int NOT NULL")]
+		public int DIVTYPE
+		{
+			get
+			{
+				return this._DIVTYPE;
+			}
+			set
+			{
+				if ((this._DIVTYPE != value))
+				{
+					this.OnDIVTYPEChanging(value);
+					this.SendPropertyChanging();
+					this._DIVTYPE = value;
+					this.SendPropertyChanged("DIVTYPE");
+					this.OnDIVTYPEChanged();
 				}
 			}
 		}

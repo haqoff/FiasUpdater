@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Linq;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace FIASUpdater
         private Dictionary<string, string> schemes;
         private Dictionary<string, string> versionFiles;
         private DateTime currentFiasVersion;
+        private DateTime newVer;
         private string temp_connStringPart;
 
         public object BundingFlags { get; private set; }
@@ -72,29 +74,339 @@ namespace FIASUpdater
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
+            btnUpdate.Enabled = false;
             if (tempDB.DatabaseExists()) tempDB.DeleteDatabase();
             tempDB.CreateDatabase();
 
             try
             {
                 LoadXMLToTempDB();
-                Update(mainDB.ActualStatus, tempDB.ActualStatus,"");
+                UpdateMainDBFromTempDB();
+
+                mainDB.UPDATES.InsertOnSubmit(new UPDATES()
+                {
+                    Version = newVer,
+                    FactUpdateDate = DateTime.Now
+                });
+
+                mainDB.SubmitChanges();
+
                 tempDB.DeleteDatabase();
+                tempDB.SubmitChanges();
+
+                MessageBox.Show(String.Format("FIAS успешно обновлён с версии '{0}' до '{1}'.", currentFiasVersion.ToShortDateString(), newVer.ToShortDateString()));
+                currentFiasVersion = newVer;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+            finally
+            {
+                lblCurrentVersion.Text = "Текущая версия FIAS: " + currentFiasVersion.ToShortDateString();
+                tbVersionDate.Clear();
+                lblReadyToUpdate.Visible = false;
+                tbNewVersionPath.Clear();
+            }
         }
 
-        private void Update(object main, object temp, string keyName)
+        private void UpdateMainDBFromTempDB()
         {
-            System.Reflection.PropertyInfo[] props = main.GetType().GetProperties();
-
-            foreach (var item in props)
+            //ActualStatus
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[ActualStatus]", "ACTSTATID", new string[]
             {
-                MessageBox.Show(item.Name);
-            }
+                "[NAME]"
+            });
+
+            //AddressObjectType
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[AddressObjectType]", "KOD_T_ST", new string[]
+            {
+                "[LEVEL]",
+                "[SCNAME]",
+                "[SOCRNAME]"
+            });
+            ///---------------------------------------
+
+            //CenterStatus
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[CenterStatus]", "[CENTERSTID]", new string[]
+                {
+                    "[NAME]"
+                });
+
+            //CurrentStatus
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[CurrentStatus]", "[CURRENTSTID]", new string[]
+                {
+                    "[NAME]"
+                });
+
+            //EstateStatus
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[EstateStatus]", "[ESTSTATID]", new string[]
+                {
+                    "[NAME]",
+                    "[SHORTNAME]"
+                });
+
+            //FlatType
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[FlatType]", "[FLTYPEID]", new string[]
+                {
+                    "[NAME]",
+                    "[SHORTNAME]"
+                });
+
+            //House
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[House]", "[HOUSEID]", new string[]
+               {
+                "[AOGUID]",
+                "[BUILDNUM]",
+                "[CADNUM]",
+                "[COUNTER]",
+                "[DIVTYPE]",
+                "[ENDDATE]",
+                "[ESTSTATUS]",
+                "[HOUSEGUID]",
+                "[HOUSENUM]",
+                "[IFNSFL]",
+                "[IFNSUL]",
+                "[NORMDOC]",
+                "[OKATO]",
+                "[OKTMO]",
+                "[POSTALCODE]",
+                "[REGIONCODE]",
+                "[STARTDATE]",
+                "[STATSTATUS]",
+                "[STRSTATUS]",
+                "[STRUCNUM]",
+                "[TERRIFNSFL]",
+                "[TERRIFNSUL]",
+                "[UPDATEDATE]"
+            });
+
+            //HouseStateStatus
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[HouseStateStatus]", "[HOUSESTID]", new string[]
+                {
+                    "[NAME]"
+                });
+
+            //IntervalStatus
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[IntervalStatus]", "[INTVSTATID]", new string[]
+                {
+                    "[NAME]"
+                });
+
+            //NormativeDocument
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[NormativeDocument]", "[NORMDOCID]", new string[]
+                {
+                    "[DOCNAME]",
+                    "[DOCDATE]",
+                    "[DOCNUM]",
+                    "[DOCTYPE]",
+                    "[DOCIMGID]"
+                });
+
+            //NormativeDocumentType
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[NormativeDocumentType]", "[NDTYPEID]", new string[]
+                {
+                    "[NAME]"
+                });
+
+            /////
+            /////Object
+            /////
+            //foreach (var newItem in tempDB.Object)
+            //{
+            //    Object existItem = mainDB.Object.Where(item => item.AOID == newItem.AOID).FirstOrDefault();
+
+            //    if (existItem != null)
+            //    {
+            //        existItem.ACTSTATUS = newItem.ACTSTATUS;
+            //        existItem.AOGUID = newItem.AOGUID;
+            //        existItem.AOLEVEL = newItem.AOLEVEL;
+            //        existItem.AREACODE = newItem.AREACODE;
+            //        existItem.AUTOCODE = newItem.AUTOCODE;
+            //        existItem.CENTSTATUS = newItem.CENTSTATUS;
+            //        existItem.CITYCODE = newItem.CITYCODE;
+            //        existItem.CODE = newItem.CODE;
+            //        existItem.CTARCODE = newItem.CTARCODE;
+            //        existItem.CURRSTATUS = newItem.CURRSTATUS;
+            //        existItem.DIVTYPE = newItem.DIVTYPE;
+            //        existItem.ENDDATE = newItem.ENDDATE;
+            //        existItem.EXTRCODE = newItem.EXTRCODE;
+            //        existItem.FORMALNAME = newItem.FORMALNAME;
+            //        existItem.IFNSFL = newItem.IFNSFL;
+            //        existItem.IFNSUL = newItem.IFNSUL;
+            //        existItem.LIVESTATUS = newItem.LIVESTATUS;
+            //        existItem.NEXTID = newItem.NEXTID;
+            //        existItem.NORMDOC = newItem.NORMDOC;
+            //        existItem.OFFNAME = newItem.OFFNAME;
+            //        existItem.OKATO = newItem.OKATO;
+            //        existItem.OKTMO = newItem.OKTMO;
+            //        existItem.OPERSTATUS = newItem.OPERSTATUS;
+            //        existItem.PARENTGUID = newItem.PARENTGUID;
+            //        existItem.PLACECODE = newItem.PLACECODE;
+            //        existItem.PLAINCODE = newItem.PLAINCODE;
+            //        existItem.PLANCODE = newItem.PLANCODE;
+            //        existItem.POSTALCODE = newItem.POSTALCODE;
+            //        existItem.PREVID = newItem.PREVID;
+            //        existItem.REGIONCODE = newItem.REGIONCODE;
+            //        existItem.SEXTCODE = newItem.SEXTCODE;
+            //        existItem.SHORTNAME = newItem.SHORTNAME;
+            //        existItem.STARTDATE = newItem.STARTDATE;
+            //        existItem.STREETCODE = newItem.STREETCODE;
+            //        existItem.TERRIFNSFL = newItem.TERRIFNSFL;
+            //        existItem.TERRIFNSUL = newItem.TERRIFNSUL;
+            //        existItem.UPDATEDATE = newItem.UPDATEDATE;
+            //    }
+            //    else
+            //    {
+            //        var aoguids = mainDB.Object.Where(item => item.AOGUID == newItem.AOGUID).ToList();
+
+            //        foreach (var aoguid in aoguids)
+            //        {
+            //            aoguid.ACTSTATUS = 0;
+            //        }
+
+            //        mainDB.Object.InsertOnSubmit(newItem);
+            //    }
+            //}
+            //ctry = 3;
+            //for (int i = 0; i < ctry; i++)
+            //{
+            //    try
+            //    {
+            //        mainDB.SubmitChanges();
+            //        break;
+            //    }
+            //    catch
+            //    {
+
+            //    }
+            //}
+
+            /////
+            /////OperationStatus
+            /////
+            //foreach (var newItem in tempDB.OperationStatus)
+            //{
+            //    OperationStatus existItem = mainDB.OperationStatus.Where(item => item.OPERSTATID == newItem.OPERSTATID).FirstOrDefault();
+
+            //    if (existItem != null)
+            //    {
+            //        existItem.NAME = newItem.NAME;
+            //    }
+            //    else mainDB.OperationStatus.InsertOnSubmit(newItem);
+            //    mainDB.SubmitChanges();
+            //}
+
+            /////
+            /////Room
+            /////
+            //foreach (var newItem in tempDB.Room)
+            //{
+            //    Room existItem = mainDB.Room.Where(item => item.ROOMID == newItem.ROOMID).FirstOrDefault();
+
+            //    if (existItem != null)
+            //    {
+            //        existItem.CADNUM = newItem.CADNUM;
+            //        existItem.ENDDATE = newItem.ENDDATE;
+            //        existItem.FLATNUMBER = newItem.FLATNUMBER;
+            //        existItem.FLATTYPE = newItem.FLATTYPE;
+            //        existItem.HOUSEGUID = newItem.HOUSEGUID;
+            //        existItem.LIVESTATUS = newItem.LIVESTATUS;
+            //        existItem.NEXTID = newItem.NEXTID;
+            //        existItem.NORMDOC = newItem.NORMDOC;
+            //        existItem.OPERSTATUS = newItem.OPERSTATUS;
+            //        existItem.POSTALCODE = newItem.POSTALCODE;
+            //        existItem.PREVID = newItem.PREVID;
+            //        existItem.REGIONCODE = newItem.REGIONCODE;
+            //        existItem.ROOMCADNUM = newItem.ROOMCADNUM;
+            //        existItem.ROOMGUID = newItem.ROOMGUID;
+            //        existItem.ROOMNUMBER = newItem.ROOMNUMBER;
+            //        existItem.ROOMTYPE = newItem.ROOMTYPE;
+            //        existItem.STARTDATE = newItem.STARTDATE;
+            //        existItem.UPDATEDATE = newItem.UPDATEDATE;
+            //    }
+            //    else
+            //    {
+            //        mainDB.Room.InsertOnSubmit(newItem);
+            //    }
+            //}
+            //mainDB.SubmitChanges();
+
+            /////
+            /////RoomType
+            /////
+            //foreach (var newItem in tempDB.RoomType)
+            //{
+            //    RoomType existItem = mainDB.RoomType.Where(item => item.RMTYPEID == newItem.RMTYPEID).FirstOrDefault(); ;
+
+            //    if (existItem != null)
+            //    {
+            //        existItem.NAME = newItem.NAME;
+            //        existItem.SHORTNAME = newItem.SHORTNAME;
+            //    }
+            //    else
+            //    {
+            //        mainDB.RoomType.InsertOnSubmit(newItem);
+            //    }
+            //    mainDB.SubmitChanges();
+            //}
+
+            /////
+            /////Stead
+            /////
+            //foreach (var newItem in tempDB.Stead)
+            //{
+            //    Stead existItem = mainDB.Stead.Where(item => item.STEADID == newItem.STEADID).FirstOrDefault();
+
+            //    if (existItem != null)
+            //    {
+            //        existItem.CADNUM = newItem.CADNUM;
+            //        existItem.DIVTYPE = newItem.DIVTYPE;
+            //        existItem.ENDDATE = newItem.ENDDATE;
+            //        existItem.IFNSFL = newItem.IFNSFL;
+            //        existItem.IFNSUL = newItem.IFNSUL;
+            //        existItem.LIVESTATUS = newItem.LIVESTATUS;
+            //        existItem.NEXTID = newItem.NEXTID;
+            //        existItem.NORMDOC = newItem.NORMDOC;
+            //        existItem.NUMBER = newItem.NUMBER;
+            //        existItem.OKATO = newItem.OKATO;
+            //        existItem.OKTMO = newItem.OKTMO;
+            //        existItem.OPERSTATUS = newItem.OPERSTATUS;
+            //        existItem.PARENTGUID = newItem.PARENTGUID;
+            //        existItem.POSTALCODE = newItem.POSTALCODE;
+            //        existItem.PREVID = newItem.PREVID;
+            //        existItem.REGIONCODE = newItem.REGIONCODE;
+            //        existItem.STARTDATE = newItem.STARTDATE;
+            //        existItem.STEADGUID = newItem.STEADGUID;
+            //        existItem.TERRIFNSFL = newItem.TERRIFNSFL;
+            //        existItem.TERRIFNSUL = newItem.TERRIFNSUL;
+            //        existItem.UPDATEDATE = newItem.UPDATEDATE;
+            //    }
+            //    else
+            //    {
+            //        mainDB.Stead.InsertOnSubmit(newItem);
+            //    }
+            //}
+            //mainDB.SubmitChanges();
+
+            /////
+            /////StructureStatus
+            /////
+            //foreach (var newItem in tempDB.StructureStatus)
+            //{
+            //    StructureStatus existItem = mainDB.StructureStatus.Where(item => item.STRSTATID == newItem.STRSTATID).FirstOrDefault();
+
+            //    if (existItem != null)
+            //    {
+            //        existItem.NAME = newItem.NAME;
+            //        existItem.SHORTNAME = newItem.SHORTNAME;
+            //    }
+            //    else
+            //    {
+            //        mainDB.StructureStatus.InsertOnSubmit(newItem);
+            //    }
+            //    mainDB.SubmitChanges();
+            //}
         }
 
 
@@ -110,7 +422,7 @@ namespace FIASUpdater
                     SchemaGen = false,
                     SGDropTables = false,
                 };
-                
+
 
                 foreach (var key in filesNamesMasks)
                 {
@@ -197,6 +509,7 @@ namespace FIASUpdater
             try
             {
                 mainDB.Connection.Close();
+                if (tempDB.DatabaseExists()) tempDB.DeleteDatabase();
                 tempDB.Connection.Close();
             }
             catch
@@ -230,11 +543,9 @@ namespace FIASUpdater
                     if (!UpdateFileDictionary(out versionFiles, fbd.SelectedPath, "*.xml")) return;
 
                     var m = Regex.Match(versionFiles[filesNamesMasks[0]], "(?<=_)[0-9]+(?=_)");
-                    DateTime newVer;
                     try
                     {
                         newVer = DateTime.ParseExact(m.Value, "yyyyMMdd", CultureInfo.InvariantCulture);
-                        tbVersionDate.Text = newVer.ToShortDateString();
                     }
                     catch
                     {
@@ -245,18 +556,26 @@ namespace FIASUpdater
                     if (CanBeUpdated(newVer)) lblReadyToUpdate.Visible = true;
                     else
                     {
-                        if (currentFiasVersion.CompareTo(newVer) > 0)
-                            MessageBox.Show("База данных ФИАСа имеет более новую версию, чем ту, которую Вы пытаетесь загрузить.");
+                        if (currentFiasVersion.CompareTo(newVer) >= 0)
+                            MessageBox.Show("База данных ФИАСа имеет такую же или более новую версию, чем ту, которую Вы пытаетесь загрузить.");
                         else
                             MessageBox.Show("Версия, которую вы пытаетесь загрузить слишком новая для текущий базы данных. Возможно вы пропустили некоторые обновления.");
                         return;
                     }
 
+                    tbVersionDate.Text = newVer.ToShortDateString();
                     tbNewVersionPath.Text = fbd.SelectedPath;
                     if (!string.IsNullOrEmpty(tbSchemePath.Text) && !string.IsNullOrEmpty(tbNewVersionPath.Text)) btnUpdate.Enabled = true;
 
                 }
             }
+        }
+
+        private void btnCheckAllUpdates_Click(object sender, EventArgs e)
+        {
+            var updForm = new UpdatesForm(mainDB);
+
+            updForm.ShowDialog();
         }
     }
 }

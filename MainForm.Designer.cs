@@ -31,17 +31,17 @@
             this.lblCurrentVersion = new System.Windows.Forms.Label();
             this.btnCheckAllUpdates = new System.Windows.Forms.Button();
             this.pUpdate = new System.Windows.Forms.Panel();
-            this.lblScheme = new System.Windows.Forms.Label();
-            this.tbSchemePath = new System.Windows.Forms.TextBox();
-            this.btnLoadScheme = new System.Windows.Forms.Button();
+            this.lblReadyToUpdate = new System.Windows.Forms.Label();
+            this.pbUpdate = new System.Windows.Forms.ProgressBar();
+            this.btnUpdate = new System.Windows.Forms.Button();
+            this.tbVersionDate = new System.Windows.Forms.TextBox();
+            this.lblVersionDate = new System.Windows.Forms.Label();
             this.btnLoadNewVersion = new System.Windows.Forms.Button();
             this.tbNewVersionPath = new System.Windows.Forms.TextBox();
             this.lblNewVersion = new System.Windows.Forms.Label();
-            this.lblVersionDate = new System.Windows.Forms.Label();
-            this.tbVersionDate = new System.Windows.Forms.TextBox();
-            this.btnUpdate = new System.Windows.Forms.Button();
-            this.pbUpdate = new System.Windows.Forms.ProgressBar();
-            this.lblReadyToUpdate = new System.Windows.Forms.Label();
+            this.btnLoadScheme = new System.Windows.Forms.Button();
+            this.tbSchemePath = new System.Windows.Forms.TextBox();
+            this.lblScheme = new System.Windows.Forms.Label();
             this.pUpdate.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,6 +63,7 @@
             this.btnCheckAllUpdates.TabIndex = 1;
             this.btnCheckAllUpdates.Text = "Посмотреть все обновления";
             this.btnCheckAllUpdates.UseVisualStyleBackColor = true;
+            this.btnCheckAllUpdates.Click += new System.EventHandler(this.btnCheckAllUpdates_Click);
             // 
             // pUpdate
             // 
@@ -83,32 +84,51 @@
             this.pUpdate.Size = new System.Drawing.Size(399, 174);
             this.pUpdate.TabIndex = 2;
             // 
-            // lblScheme
+            // lblReadyToUpdate
             // 
-            this.lblScheme.AutoSize = true;
-            this.lblScheme.Location = new System.Drawing.Point(4, 17);
-            this.lblScheme.Name = "lblScheme";
-            this.lblScheme.Size = new System.Drawing.Size(42, 13);
-            this.lblScheme.TabIndex = 0;
-            this.lblScheme.Text = "Схема:";
+            this.lblReadyToUpdate.AutoSize = true;
+            this.lblReadyToUpdate.Location = new System.Drawing.Point(149, 97);
+            this.lblReadyToUpdate.Name = "lblReadyToUpdate";
+            this.lblReadyToUpdate.Size = new System.Drawing.Size(119, 13);
+            this.lblReadyToUpdate.TabIndex = 10;
+            this.lblReadyToUpdate.Text = "Готово к обновлению.";
+            this.lblReadyToUpdate.Visible = false;
             // 
-            // tbSchemePath
+            // pbUpdate
             // 
-            this.tbSchemePath.Location = new System.Drawing.Point(91, 14);
-            this.tbSchemePath.Name = "tbSchemePath";
-            this.tbSchemePath.ReadOnly = true;
-            this.tbSchemePath.Size = new System.Drawing.Size(259, 20);
-            this.tbSchemePath.TabIndex = 1;
+            this.pbUpdate.Enabled = false;
+            this.pbUpdate.Location = new System.Drawing.Point(3, 152);
+            this.pbUpdate.Name = "pbUpdate";
+            this.pbUpdate.Size = new System.Drawing.Size(382, 17);
+            this.pbUpdate.TabIndex = 9;
             // 
-            // btnLoadScheme
+            // btnUpdate
             // 
-            this.btnLoadScheme.Location = new System.Drawing.Point(356, 12);
-            this.btnLoadScheme.Name = "btnLoadScheme";
-            this.btnLoadScheme.Size = new System.Drawing.Size(33, 23);
-            this.btnLoadScheme.TabIndex = 2;
-            this.btnLoadScheme.Text = "...";
-            this.btnLoadScheme.UseVisualStyleBackColor = true;
-            this.btnLoadScheme.Click += new System.EventHandler(this.btnLoadScheme_Click);
+            this.btnUpdate.Enabled = false;
+            this.btnUpdate.Location = new System.Drawing.Point(152, 123);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(110, 23);
+            this.btnUpdate.TabIndex = 8;
+            this.btnUpdate.Text = "Обновить FIAS";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            // 
+            // tbVersionDate
+            // 
+            this.tbVersionDate.Location = new System.Drawing.Point(91, 74);
+            this.tbVersionDate.Name = "tbVersionDate";
+            this.tbVersionDate.ReadOnly = true;
+            this.tbVersionDate.Size = new System.Drawing.Size(259, 20);
+            this.tbVersionDate.TabIndex = 7;
+            // 
+            // lblVersionDate
+            // 
+            this.lblVersionDate.AutoSize = true;
+            this.lblVersionDate.Location = new System.Drawing.Point(3, 77);
+            this.lblVersionDate.Name = "lblVersionDate";
+            this.lblVersionDate.Size = new System.Drawing.Size(75, 13);
+            this.lblVersionDate.TabIndex = 6;
+            this.lblVersionDate.Text = "Дата версии:";
             // 
             // btnLoadNewVersion
             // 
@@ -138,51 +158,32 @@
             this.lblNewVersion.TabIndex = 3;
             this.lblNewVersion.Text = "Новая версия:";
             // 
-            // lblVersionDate
+            // btnLoadScheme
             // 
-            this.lblVersionDate.AutoSize = true;
-            this.lblVersionDate.Location = new System.Drawing.Point(3, 77);
-            this.lblVersionDate.Name = "lblVersionDate";
-            this.lblVersionDate.Size = new System.Drawing.Size(75, 13);
-            this.lblVersionDate.TabIndex = 6;
-            this.lblVersionDate.Text = "Дата версии:";
+            this.btnLoadScheme.Location = new System.Drawing.Point(356, 12);
+            this.btnLoadScheme.Name = "btnLoadScheme";
+            this.btnLoadScheme.Size = new System.Drawing.Size(33, 23);
+            this.btnLoadScheme.TabIndex = 2;
+            this.btnLoadScheme.Text = "...";
+            this.btnLoadScheme.UseVisualStyleBackColor = true;
+            this.btnLoadScheme.Click += new System.EventHandler(this.btnLoadScheme_Click);
             // 
-            // tbVersionDate
+            // tbSchemePath
             // 
-            this.tbVersionDate.Location = new System.Drawing.Point(91, 74);
-            this.tbVersionDate.Name = "tbVersionDate";
-            this.tbVersionDate.ReadOnly = true;
-            this.tbVersionDate.Size = new System.Drawing.Size(259, 20);
-            this.tbVersionDate.TabIndex = 7;
+            this.tbSchemePath.Location = new System.Drawing.Point(91, 14);
+            this.tbSchemePath.Name = "tbSchemePath";
+            this.tbSchemePath.ReadOnly = true;
+            this.tbSchemePath.Size = new System.Drawing.Size(259, 20);
+            this.tbSchemePath.TabIndex = 1;
             // 
-            // btnUpdate
+            // lblScheme
             // 
-            this.btnUpdate.Enabled = false;
-            this.btnUpdate.Location = new System.Drawing.Point(152, 123);
-            this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(110, 23);
-            this.btnUpdate.TabIndex = 8;
-            this.btnUpdate.Text = "Обновить FIAS";
-            this.btnUpdate.UseVisualStyleBackColor = true;
-            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
-            // 
-            // pbUpdate
-            // 
-            this.pbUpdate.Enabled = false;
-            this.pbUpdate.Location = new System.Drawing.Point(3, 152);
-            this.pbUpdate.Name = "pbUpdate";
-            this.pbUpdate.Size = new System.Drawing.Size(382, 17);
-            this.pbUpdate.TabIndex = 9;
-            // 
-            // lblReadyToUpdate
-            // 
-            this.lblReadyToUpdate.AutoSize = true;
-            this.lblReadyToUpdate.Location = new System.Drawing.Point(149, 97);
-            this.lblReadyToUpdate.Name = "lblReadyToUpdate";
-            this.lblReadyToUpdate.Size = new System.Drawing.Size(119, 13);
-            this.lblReadyToUpdate.TabIndex = 10;
-            this.lblReadyToUpdate.Text = "Готово к обновлению.";
-            this.lblReadyToUpdate.Visible = false;
+            this.lblScheme.AutoSize = true;
+            this.lblScheme.Location = new System.Drawing.Point(4, 17);
+            this.lblScheme.Name = "lblScheme";
+            this.lblScheme.Size = new System.Drawing.Size(42, 13);
+            this.lblScheme.TabIndex = 0;
+            this.lblScheme.Text = "Схема:";
             // 
             // MainForm
             // 
