@@ -17,6 +17,8 @@ namespace FIASUpdater
         private FIASClassesDataContext mainDB;
         private FIASClassesDataContext tempDB;
 
+        private TimeSpan timeLeft;
+
         private List<string> filesNamesMasks;
         private Dictionary<string, string> schemes;
         private Dictionary<string, string> versionFiles;
@@ -31,6 +33,8 @@ namespace FIASUpdater
             this.mainDB = mainDB;
             this.tempDB = tempDB;
             this.temp_connStringPart = temp_connStringPart;
+
+            timeLeft = new TimeSpan();
 
             versionFiles = new Dictionary<string, string>();
 
@@ -93,6 +97,8 @@ namespace FIASUpdater
 
             try
             {
+                timeLeft = TimeSpan.Zero;
+
                 SetProgressInfo("Загрузка XML-файлов во временную БД.");
                 LoadXMLToTempDB();
                 UpdateMainDBFromTempDB();
@@ -453,7 +459,6 @@ namespace FIASUpdater
             try
             {
                 mainDB.Connection.Close();
-                if (tempDB.DatabaseExists()) tempDB.DeleteDatabase();
                 tempDB.Connection.Close();
             }
             catch

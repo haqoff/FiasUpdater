@@ -84,19 +84,18 @@
             // 
             // lblReadyToUpdate
             // 
-            this.lblReadyToUpdate.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lblReadyToUpdate.AutoSize = true;
-            this.lblReadyToUpdate.Location = new System.Drawing.Point(149, 97);
+            this.lblReadyToUpdate.Location = new System.Drawing.Point(4, 97);
             this.lblReadyToUpdate.Name = "lblReadyToUpdate";
-            this.lblReadyToUpdate.Size = new System.Drawing.Size(119, 13);
+            this.lblReadyToUpdate.Size = new System.Drawing.Size(390, 13);
             this.lblReadyToUpdate.TabIndex = 10;
             this.lblReadyToUpdate.Text = "Готово к обновлению.";
+            this.lblReadyToUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblReadyToUpdate.Visible = false;
             // 
             // btnUpdate
             // 
             this.btnUpdate.Enabled = false;
-            this.btnUpdate.Location = new System.Drawing.Point(152, 133);
+            this.btnUpdate.Location = new System.Drawing.Point(152, 146);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(110, 23);
             this.btnUpdate.TabIndex = 8;
