@@ -24,11 +24,9 @@ namespace FIASUpdater
         }
 
 
-        public static int BuildUpdateSqlCommand(FIASClassesDataContext mainDB,FIASClassesDataContext tempDB, string tableName, string key,IEnumerable<string> fields)
+        public static int BuildUpdateSqlCommand(FIASClassesDataContext mainDB, FIASClassesDataContext tempDB, string tableName, string key, IEnumerable<string> fields)
         {
             int updatedRows = 0;
-
-            mainDB.Connection.Open();
 
             var sb = new StringBuilder();
             foreach (var field in fields)
@@ -42,13 +40,43 @@ namespace FIASUpdater
                     "FROM {2}.[dbo].{0} As t2 " +
                     "WHERE {0}.{3} = t2.{3}", tableName, sb.ToString(), tempDB.Connection.Database, key);
 
+            sb.Clear();
+            foreach (var field in fields)
+            {
+                if (sb.Length != 0) sb.Append(',');
+                sb.Append(field);
+            }
+
+            sb.Append("," + key);
+            var fieldsString = sb.ToString();
+
+
+            sb.Clear();
+            foreach (var field in fields)
+            {
+                if (sb.Length != 0) sb.Append(',');
+                sb.Append("t2.");
+                sb.Append(field);
+            }
+            sb.Append(",t2." + key);
+
+            var fieldsWithNamedTable = sb.ToString();
+            string insertConstruct = string.Format("INSERT INTO {0} ({1}) SELECT {2} FROM {0} as t1 RIGHT JOIN {3}.dbo.{0} as t2 " +
+                "ON t1.{4} = t2.{4} WHERE t1.{4} IS NULL", tableName, fieldsString, fieldsWithNamedTable, tempDB.Connection.Database, key);
+
             try
             {
+                mainDB.Connection.Open();
                 using (var command = (SqlCommand)mainDB.Connection.CreateCommand())
                 {
                     command.CommandTimeout = 0;
+
                     command.CommandText = updateConstruct;
                     updatedRows = command.ExecuteNonQuery();
+
+                    command.CommandText = insertConstruct;
+                    updatedRows += command.ExecuteNonQuery();
+
                     mainDB.Connection.Close();
                 }
             }
@@ -57,7 +85,6 @@ namespace FIASUpdater
                 throw ex;
             }
 
-            string insertConstruct = string.Format("");
 
             return updatedRows;
         }

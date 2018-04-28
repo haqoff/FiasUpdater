@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace FIASUpdater
@@ -72,14 +73,27 @@ namespace FIASUpdater
             lblCurrentVersion.Text = "Текущая версия FIAS: " + currentFiasVersion.ToShortDateString();
         }
 
+        private void SetProgressInfo(string info)
+        {
+            lblReadyToUpdate.Invoke(new Action(() => lblReadyToUpdate.Text = info)); 
+        }
+
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            btnUpdate.Enabled = false;
+            var th = new Thread(LoadAndUpdate);
+            th.Start();
+        }
+
+        private void LoadAndUpdate()
+        {
+            btnUpdate.Invoke(new Action(() => btnUpdate.Enabled = false));
+            SetProgressInfo("Создание временной пустой БД.");
             if (tempDB.DatabaseExists()) tempDB.DeleteDatabase();
             tempDB.CreateDatabase();
 
             try
             {
+                SetProgressInfo("Загрузка XML-файлов во временную БД.");
                 LoadXMLToTempDB();
                 UpdateMainDBFromTempDB();
 
@@ -91,6 +105,7 @@ namespace FIASUpdater
 
                 mainDB.SubmitChanges();
 
+                SetProgressInfo("Удаление временной БД для загрузки.");
                 tempDB.DeleteDatabase();
                 tempDB.SubmitChanges();
 
@@ -103,22 +118,24 @@ namespace FIASUpdater
             }
             finally
             {
-                lblCurrentVersion.Text = "Текущая версия FIAS: " + currentFiasVersion.ToShortDateString();
-                tbVersionDate.Clear();
-                lblReadyToUpdate.Visible = false;
-                tbNewVersionPath.Clear();
+                lblCurrentVersion.Invoke(new Action(() => lblCurrentVersion.Text = "Текущая версия FIAS: " + currentFiasVersion.ToShortDateString()));
+                tbVersionDate.Invoke(new Action(() => tbVersionDate.Clear()));
+                lblReadyToUpdate.Invoke(new Action(() => lblReadyToUpdate.Visible = false));
+                tbNewVersionPath.Invoke(new Action(() => tbNewVersionPath.Clear()));
             }
         }
 
         private void UpdateMainDBFromTempDB()
         {
             //ActualStatus
+            SetProgressInfo("Обновление таблицы ACTUALSTATUS");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[ActualStatus]", "ACTSTATID", new string[]
             {
                 "[NAME]"
             });
 
             //AddressObjectType
+            SetProgressInfo("Обновление таблицы AddressObjectType");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[AddressObjectType]", "KOD_T_ST", new string[]
             {
                 "[LEVEL]",
@@ -128,18 +145,21 @@ namespace FIASUpdater
             ///---------------------------------------
 
             //CenterStatus
+            SetProgressInfo("Обновление таблицы CenterStatus");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[CenterStatus]", "[CENTERSTID]", new string[]
                 {
                     "[NAME]"
                 });
 
             //CurrentStatus
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[CurrentStatus]", "[CURRENTSTID]", new string[]
+            SetProgressInfo("Обновление таблицы CurrentStatus");
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[CurrentStatus]", "[CURENTSTID]", new string[]
                 {
                     "[NAME]"
                 });
 
             //EstateStatus
+            SetProgressInfo("Обновление таблицы EstateStatus");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[EstateStatus]", "[ESTSTATID]", new string[]
                 {
                     "[NAME]",
@@ -147,6 +167,7 @@ namespace FIASUpdater
                 });
 
             //FlatType
+            SetProgressInfo("Обновление таблицы FlatType");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[FlatType]", "[FLTYPEID]", new string[]
                 {
                     "[NAME]",
@@ -154,6 +175,7 @@ namespace FIASUpdater
                 });
 
             //House
+            SetProgressInfo("Обновление таблицы House");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[House]", "[HOUSEID]", new string[]
                {
                 "[AOGUID]",
@@ -182,18 +204,21 @@ namespace FIASUpdater
             });
 
             //HouseStateStatus
+            SetProgressInfo("Обновление таблицы HouseStateStatus");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[HouseStateStatus]", "[HOUSESTID]", new string[]
                 {
                     "[NAME]"
                 });
 
             //IntervalStatus
+            SetProgressInfo("Обновление таблицы IntervalStatus");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[IntervalStatus]", "[INTVSTATID]", new string[]
                 {
                     "[NAME]"
                 });
 
             //NormativeDocument
+            SetProgressInfo("Обновление таблицы NormativeDocument");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[NormativeDocument]", "[NORMDOCID]", new string[]
                 {
                     "[DOCNAME]",
@@ -204,209 +229,128 @@ namespace FIASUpdater
                 });
 
             //NormativeDocumentType
+            SetProgressInfo("Обновление таблицы NormativeDocumentType");
             Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[NormativeDocumentType]", "[NDTYPEID]", new string[]
                 {
                     "[NAME]"
                 });
 
-            /////
-            /////Object
-            /////
-            //foreach (var newItem in tempDB.Object)
-            //{
-            //    Object existItem = mainDB.Object.Where(item => item.AOID == newItem.AOID).FirstOrDefault();
+            //Object
+            SetProgressInfo("Обновление таблицы Object");
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[Object]", "[AOID]", new string[]
+                {
+                    "[ACTSTATUS]",
+                    "[AOGUID]",
+                    "[AOLEVEL]",
+                    "[AREACODE]",
+                    "[AUTOCODE]",
+                    "[CENTSTATUS]",
+                    "[CITYCODE]",
+                    "[CODE]",
+                    "[CTARCODE]",
+                    "[CURRSTATUS]",
+                    "[DIVTYPE]",
+                    "[ENDDATE]",
+                    "[EXTRCODE]",
+                    "[FORMALNAME]",
+                    "[IFNSFL]",
+                    "[IFNSUL]",
+                    "[LIVESTATUS]",
+                    "[NEXTID]",
+                    "[NORMDOC]",
+                    "[OFFNAME]",
+                    "[OKATO]",
+                    "[OKTMO]",
+                    "[OPERSTATUS]",
+                    "[PARENTGUID]",
+                    "[PLACECODE]",
+                    "[PLAINCODE]",
+                    "[PLANCODE]",
+                    "[POSTALCODE]",
+                    "[PREVID]",
+                    "[REGIONCODE]",
+                    "[SEXTCODE]",
+                    "[SHORTNAME]",
+                    "[STARTDATE]",
+                    "[STREETCODE]",
+                    "[TERRIFNSFL]",
+                    "[TERRIFNSUL]",
+                    "[UPDATEDATE]"
+                });
 
-            //    if (existItem != null)
-            //    {
-            //        existItem.ACTSTATUS = newItem.ACTSTATUS;
-            //        existItem.AOGUID = newItem.AOGUID;
-            //        existItem.AOLEVEL = newItem.AOLEVEL;
-            //        existItem.AREACODE = newItem.AREACODE;
-            //        existItem.AUTOCODE = newItem.AUTOCODE;
-            //        existItem.CENTSTATUS = newItem.CENTSTATUS;
-            //        existItem.CITYCODE = newItem.CITYCODE;
-            //        existItem.CODE = newItem.CODE;
-            //        existItem.CTARCODE = newItem.CTARCODE;
-            //        existItem.CURRSTATUS = newItem.CURRSTATUS;
-            //        existItem.DIVTYPE = newItem.DIVTYPE;
-            //        existItem.ENDDATE = newItem.ENDDATE;
-            //        existItem.EXTRCODE = newItem.EXTRCODE;
-            //        existItem.FORMALNAME = newItem.FORMALNAME;
-            //        existItem.IFNSFL = newItem.IFNSFL;
-            //        existItem.IFNSUL = newItem.IFNSUL;
-            //        existItem.LIVESTATUS = newItem.LIVESTATUS;
-            //        existItem.NEXTID = newItem.NEXTID;
-            //        existItem.NORMDOC = newItem.NORMDOC;
-            //        existItem.OFFNAME = newItem.OFFNAME;
-            //        existItem.OKATO = newItem.OKATO;
-            //        existItem.OKTMO = newItem.OKTMO;
-            //        existItem.OPERSTATUS = newItem.OPERSTATUS;
-            //        existItem.PARENTGUID = newItem.PARENTGUID;
-            //        existItem.PLACECODE = newItem.PLACECODE;
-            //        existItem.PLAINCODE = newItem.PLAINCODE;
-            //        existItem.PLANCODE = newItem.PLANCODE;
-            //        existItem.POSTALCODE = newItem.POSTALCODE;
-            //        existItem.PREVID = newItem.PREVID;
-            //        existItem.REGIONCODE = newItem.REGIONCODE;
-            //        existItem.SEXTCODE = newItem.SEXTCODE;
-            //        existItem.SHORTNAME = newItem.SHORTNAME;
-            //        existItem.STARTDATE = newItem.STARTDATE;
-            //        existItem.STREETCODE = newItem.STREETCODE;
-            //        existItem.TERRIFNSFL = newItem.TERRIFNSFL;
-            //        existItem.TERRIFNSUL = newItem.TERRIFNSUL;
-            //        existItem.UPDATEDATE = newItem.UPDATEDATE;
-            //    }
-            //    else
-            //    {
-            //        var aoguids = mainDB.Object.Where(item => item.AOGUID == newItem.AOGUID).ToList();
+            //OperationStatus
+            SetProgressInfo("Обновление таблицы OperationStatus");
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[OperationStatus]", "[OPERSTATID]", new string[]
+            {
+                "[NAME]"
+            });
 
-            //        foreach (var aoguid in aoguids)
-            //        {
-            //            aoguid.ACTSTATUS = 0;
-            //        }
+            //Room
+            SetProgressInfo("Обновление таблицы Room");
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[Room]", "[ROOMID]", new string[]
+            {
+                "[ROOMGUID]",
+                "[FLATNUMBER]",
+                "[FLATTYPE]",
+                "[ROOMNUMBER]",
+                "[ROOMTYPE]",
+                "[REGIONCODE]",
+                "[POSTALCODE]",
+                "[UPDATEDATE]",
+                "[HOUSEGUID]",
+                "[PREVID]",
+                "[NEXTID]",
+                "[STARTDATE]",
+                "[ENDDATE]",
+                "[LIVESTATUS]",
+                "[NORMDOC]",
+                "[OPERSTATUS]",
+                "[CADNUM]",
+                "[ROOMCADNUM]"
+            });
 
-            //        mainDB.Object.InsertOnSubmit(newItem);
-            //    }
-            //}
-            //ctry = 3;
-            //for (int i = 0; i < ctry; i++)
-            //{
-            //    try
-            //    {
-            //        mainDB.SubmitChanges();
-            //        break;
-            //    }
-            //    catch
-            //    {
+            //RoomType
+            SetProgressInfo("Обновление таблицы RoomType");
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[RoomType]", "[RMTYPEID]", new string[]
+            {
+                "[NAME]",
+                "[SHORTNAME]"
+            });
 
-            //    }
-            //}
+            //Stead
+            SetProgressInfo("Обновление таблицы Stead");
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[Stead]", "[STEADID]", new string[]
+            {
+                "[STEADGUID]",
+                "[NUMBER]",
+                "[REGIONCODE]",
+                "[POSTALCODE]",
+                "[IFNSFL]",
+                "[TERRIFNSFL]",
+                "[TERRIFNSUL]",
+                "[OKATO]",
+                "[OKTMO]",
+                "[UPDATEDATE]",
+                "[PARENTGUID]",
+                "[PREVID]",
+                "[NEXTID]",
+                "[OPERSTATUS]",
+                "[STARTDATE]",
+                "[ENDDATE]",
+                "[NORMDOC]",
+                "[LIVESTATUS]",
+                "[CADNUM]",
+                "[DIVTYPE]"
+            });
 
-            /////
-            /////OperationStatus
-            /////
-            //foreach (var newItem in tempDB.OperationStatus)
-            //{
-            //    OperationStatus existItem = mainDB.OperationStatus.Where(item => item.OPERSTATID == newItem.OPERSTATID).FirstOrDefault();
-
-            //    if (existItem != null)
-            //    {
-            //        existItem.NAME = newItem.NAME;
-            //    }
-            //    else mainDB.OperationStatus.InsertOnSubmit(newItem);
-            //    mainDB.SubmitChanges();
-            //}
-
-            /////
-            /////Room
-            /////
-            //foreach (var newItem in tempDB.Room)
-            //{
-            //    Room existItem = mainDB.Room.Where(item => item.ROOMID == newItem.ROOMID).FirstOrDefault();
-
-            //    if (existItem != null)
-            //    {
-            //        existItem.CADNUM = newItem.CADNUM;
-            //        existItem.ENDDATE = newItem.ENDDATE;
-            //        existItem.FLATNUMBER = newItem.FLATNUMBER;
-            //        existItem.FLATTYPE = newItem.FLATTYPE;
-            //        existItem.HOUSEGUID = newItem.HOUSEGUID;
-            //        existItem.LIVESTATUS = newItem.LIVESTATUS;
-            //        existItem.NEXTID = newItem.NEXTID;
-            //        existItem.NORMDOC = newItem.NORMDOC;
-            //        existItem.OPERSTATUS = newItem.OPERSTATUS;
-            //        existItem.POSTALCODE = newItem.POSTALCODE;
-            //        existItem.PREVID = newItem.PREVID;
-            //        existItem.REGIONCODE = newItem.REGIONCODE;
-            //        existItem.ROOMCADNUM = newItem.ROOMCADNUM;
-            //        existItem.ROOMGUID = newItem.ROOMGUID;
-            //        existItem.ROOMNUMBER = newItem.ROOMNUMBER;
-            //        existItem.ROOMTYPE = newItem.ROOMTYPE;
-            //        existItem.STARTDATE = newItem.STARTDATE;
-            //        existItem.UPDATEDATE = newItem.UPDATEDATE;
-            //    }
-            //    else
-            //    {
-            //        mainDB.Room.InsertOnSubmit(newItem);
-            //    }
-            //}
-            //mainDB.SubmitChanges();
-
-            /////
-            /////RoomType
-            /////
-            //foreach (var newItem in tempDB.RoomType)
-            //{
-            //    RoomType existItem = mainDB.RoomType.Where(item => item.RMTYPEID == newItem.RMTYPEID).FirstOrDefault(); ;
-
-            //    if (existItem != null)
-            //    {
-            //        existItem.NAME = newItem.NAME;
-            //        existItem.SHORTNAME = newItem.SHORTNAME;
-            //    }
-            //    else
-            //    {
-            //        mainDB.RoomType.InsertOnSubmit(newItem);
-            //    }
-            //    mainDB.SubmitChanges();
-            //}
-
-            /////
-            /////Stead
-            /////
-            //foreach (var newItem in tempDB.Stead)
-            //{
-            //    Stead existItem = mainDB.Stead.Where(item => item.STEADID == newItem.STEADID).FirstOrDefault();
-
-            //    if (existItem != null)
-            //    {
-            //        existItem.CADNUM = newItem.CADNUM;
-            //        existItem.DIVTYPE = newItem.DIVTYPE;
-            //        existItem.ENDDATE = newItem.ENDDATE;
-            //        existItem.IFNSFL = newItem.IFNSFL;
-            //        existItem.IFNSUL = newItem.IFNSUL;
-            //        existItem.LIVESTATUS = newItem.LIVESTATUS;
-            //        existItem.NEXTID = newItem.NEXTID;
-            //        existItem.NORMDOC = newItem.NORMDOC;
-            //        existItem.NUMBER = newItem.NUMBER;
-            //        existItem.OKATO = newItem.OKATO;
-            //        existItem.OKTMO = newItem.OKTMO;
-            //        existItem.OPERSTATUS = newItem.OPERSTATUS;
-            //        existItem.PARENTGUID = newItem.PARENTGUID;
-            //        existItem.POSTALCODE = newItem.POSTALCODE;
-            //        existItem.PREVID = newItem.PREVID;
-            //        existItem.REGIONCODE = newItem.REGIONCODE;
-            //        existItem.STARTDATE = newItem.STARTDATE;
-            //        existItem.STEADGUID = newItem.STEADGUID;
-            //        existItem.TERRIFNSFL = newItem.TERRIFNSFL;
-            //        existItem.TERRIFNSUL = newItem.TERRIFNSUL;
-            //        existItem.UPDATEDATE = newItem.UPDATEDATE;
-            //    }
-            //    else
-            //    {
-            //        mainDB.Stead.InsertOnSubmit(newItem);
-            //    }
-            //}
-            //mainDB.SubmitChanges();
-
-            /////
-            /////StructureStatus
-            /////
-            //foreach (var newItem in tempDB.StructureStatus)
-            //{
-            //    StructureStatus existItem = mainDB.StructureStatus.Where(item => item.STRSTATID == newItem.STRSTATID).FirstOrDefault();
-
-            //    if (existItem != null)
-            //    {
-            //        existItem.NAME = newItem.NAME;
-            //        existItem.SHORTNAME = newItem.SHORTNAME;
-            //    }
-            //    else
-            //    {
-            //        mainDB.StructureStatus.InsertOnSubmit(newItem);
-            //    }
-            //    mainDB.SubmitChanges();
-            //}
+            //StructureStatus
+            SetProgressInfo("Обновление таблицы StructureStatus");
+            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[StructureStatus]", "[STRSTATID]", new string[]
+            {
+                "[NAME]",
+                "[SHORTNAME]"
+            });
+            SetProgressInfo("Готово к загрузке.");
         }
 
 

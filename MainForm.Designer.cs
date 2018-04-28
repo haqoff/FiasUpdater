@@ -32,7 +32,6 @@
             this.btnCheckAllUpdates = new System.Windows.Forms.Button();
             this.pUpdate = new System.Windows.Forms.Panel();
             this.lblReadyToUpdate = new System.Windows.Forms.Label();
-            this.pbUpdate = new System.Windows.Forms.ProgressBar();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.tbVersionDate = new System.Windows.Forms.TextBox();
             this.lblVersionDate = new System.Windows.Forms.Label();
@@ -69,7 +68,6 @@
             // 
             this.pUpdate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pUpdate.Controls.Add(this.lblReadyToUpdate);
-            this.pUpdate.Controls.Add(this.pbUpdate);
             this.pUpdate.Controls.Add(this.btnUpdate);
             this.pUpdate.Controls.Add(this.tbVersionDate);
             this.pUpdate.Controls.Add(this.lblVersionDate);
@@ -86,6 +84,7 @@
             // 
             // lblReadyToUpdate
             // 
+            this.lblReadyToUpdate.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.lblReadyToUpdate.AutoSize = true;
             this.lblReadyToUpdate.Location = new System.Drawing.Point(149, 97);
             this.lblReadyToUpdate.Name = "lblReadyToUpdate";
@@ -94,18 +93,10 @@
             this.lblReadyToUpdate.Text = "Готово к обновлению.";
             this.lblReadyToUpdate.Visible = false;
             // 
-            // pbUpdate
-            // 
-            this.pbUpdate.Enabled = false;
-            this.pbUpdate.Location = new System.Drawing.Point(3, 152);
-            this.pbUpdate.Name = "pbUpdate";
-            this.pbUpdate.Size = new System.Drawing.Size(382, 17);
-            this.pbUpdate.TabIndex = 9;
-            // 
             // btnUpdate
             // 
             this.btnUpdate.Enabled = false;
-            this.btnUpdate.Location = new System.Drawing.Point(152, 123);
+            this.btnUpdate.Location = new System.Drawing.Point(152, 133);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(110, 23);
             this.btnUpdate.TabIndex = 8;
@@ -212,7 +203,6 @@
         private System.Windows.Forms.Label lblCurrentVersion;
         private System.Windows.Forms.Button btnCheckAllUpdates;
         private System.Windows.Forms.Panel pUpdate;
-        private System.Windows.Forms.ProgressBar pbUpdate;
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.TextBox tbVersionDate;
         private System.Windows.Forms.Label lblVersionDate;
