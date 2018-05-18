@@ -124,6 +124,12 @@ namespace FIASUpdater
             }
             finally
             {
+                if (tempDB.DatabaseExists())
+                {
+                    tempDB.DeleteDatabase();
+                    tempDB.SubmitChanges();
+                }
+
                 lblCurrentVersion.Invoke(new Action(() => lblCurrentVersion.Text = "Текущая версия FIAS: " + currentFiasVersion.ToShortDateString()));
                 tbVersionDate.Invoke(new Action(() => tbVersionDate.Clear()));
                 lblReadyToUpdate.Invoke(new Action(() => lblReadyToUpdate.Visible = false));
