@@ -91,6 +91,8 @@ namespace FIASUpdater
         private void LoadAndUpdate()
         {
             btnUpdate.Invoke(new Action(() => btnUpdate.Enabled = false));
+            btnCheckAllUpdates.Invoke(new Action(() => btnCheckAllUpdates.Enabled = false));
+
             SetProgressInfo("Создание временной пустой БД.");
             if (tempDB.DatabaseExists()) tempDB.DeleteDatabase();
             tempDB.CreateDatabase();
@@ -100,8 +102,8 @@ namespace FIASUpdater
                 timeLeft = TimeSpan.Zero;
 
                 SetProgressInfo("Загрузка XML-файлов во временную БД.");
-                LoadXMLToTempDB();
-                UpdateMainDBFromTempDB();
+                LoadXmlToTempDb();
+                UpdateMainDbFromTempDb();
 
                 mainDB.UPDATES.InsertOnSubmit(new UPDATES()
                 {
@@ -132,47 +134,50 @@ namespace FIASUpdater
 
                 lblCurrentVersion.Invoke(new Action(() => lblCurrentVersion.Text = "Текущая версия FIAS: " + currentFiasVersion.ToShortDateString()));
                 tbVersionDate.Invoke(new Action(() => tbVersionDate.Clear()));
+                btnUpdate.Invoke(new Action(() => btnUpdate.Enabled = true));
+                btnCheckAllUpdates.Invoke(new Action(() => btnCheckAllUpdates.Visible = true));
                 lblReadyToUpdate.Invoke(new Action(() => lblReadyToUpdate.Visible = false));
                 tbNewVersionPath.Invoke(new Action(() => tbNewVersionPath.Clear()));
             }
         }
 
-        private void UpdateMainDBFromTempDB()
+        private void UpdateMainDbFromTempDb()
         {
             //ActualStatus
             SetProgressInfo("Обновление таблицы ACTUALSTATUS");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[ActualStatus]", "ACTSTATID", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[ActualStatus]", "ACTSTATID", new[]
             {
                 "[NAME]"
             });
 
             //AddressObjectType
             SetProgressInfo("Обновление таблицы AddressObjectType");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[AddressObjectType]", "KOD_T_ST", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[AddressObjectType]", "KOD_T_ST", new[]
             {
                 "[LEVEL]",
                 "[SCNAME]",
                 "[SOCRNAME]"
             });
-            ///---------------------------------------
+
+            //-----
 
             //CenterStatus
             SetProgressInfo("Обновление таблицы CenterStatus");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[CenterStatus]", "[CENTERSTID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[CenterStatus]", "[CENTERSTID]", new[]
                 {
                     "[NAME]"
                 });
 
             //CurrentStatus
             SetProgressInfo("Обновление таблицы CurrentStatus");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[CurrentStatus]", "[CURENTSTID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[CurrentStatus]", "[CURENTSTID]", new[]
                 {
                     "[NAME]"
                 });
 
             //EstateStatus
             SetProgressInfo("Обновление таблицы EstateStatus");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[EstateStatus]", "[ESTSTATID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[EstateStatus]", "[ESTSTATID]", new[]
                 {
                     "[NAME]",
                     "[SHORTNAME]"
@@ -180,7 +185,7 @@ namespace FIASUpdater
 
             //FlatType
             SetProgressInfo("Обновление таблицы FlatType");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[FlatType]", "[FLTYPEID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[FlatType]", "[FLTYPEID]", new[]
                 {
                     "[NAME]",
                     "[SHORTNAME]"
@@ -188,7 +193,7 @@ namespace FIASUpdater
 
             //House
             SetProgressInfo("Обновление таблицы House");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[House]", "[HOUSEID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[House]", "[HOUSEID]", new[]
                {
                 "[AOGUID]",
                 "[BUILDNUM]",
@@ -217,21 +222,21 @@ namespace FIASUpdater
 
             //HouseStateStatus
             SetProgressInfo("Обновление таблицы HouseStateStatus");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[HouseStateStatus]", "[HOUSESTID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[HouseStateStatus]", "[HOUSESTID]", new[]
                 {
                     "[NAME]"
                 });
 
             //IntervalStatus
             SetProgressInfo("Обновление таблицы IntervalStatus");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[IntervalStatus]", "[INTVSTATID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[IntervalStatus]", "[INTVSTATID]", new[]
                 {
                     "[NAME]"
                 });
 
             //NormativeDocument
             SetProgressInfo("Обновление таблицы NormativeDocument");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[NormativeDocument]", "[NORMDOCID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[NormativeDocument]", "[NORMDOCID]", new[]
                 {
                     "[DOCNAME]",
                     "[DOCDATE]",
@@ -242,14 +247,14 @@ namespace FIASUpdater
 
             //NormativeDocumentType
             SetProgressInfo("Обновление таблицы NormativeDocumentType");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[NormativeDocumentType]", "[NDTYPEID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[NormativeDocumentType]", "[NDTYPEID]", new[]
                 {
                     "[NAME]"
                 });
 
             //Object
             SetProgressInfo("Обновление таблицы Object");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[Object]", "[AOID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[Object]", "[AOID]", new[]
                 {
                     "[ACTSTATUS]",
                     "[AOGUID]",
@@ -292,14 +297,14 @@ namespace FIASUpdater
 
             //OperationStatus
             SetProgressInfo("Обновление таблицы OperationStatus");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[OperationStatus]", "[OPERSTATID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[OperationStatus]", "[OPERSTATID]", new[]
             {
                 "[NAME]"
             });
 
             //Room
             SetProgressInfo("Обновление таблицы Room");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[Room]", "[ROOMID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[Room]", "[ROOMID]", new[]
             {
                 "[ROOMGUID]",
                 "[FLATNUMBER]",
@@ -323,7 +328,7 @@ namespace FIASUpdater
 
             //RoomType
             SetProgressInfo("Обновление таблицы RoomType");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[RoomType]", "[RMTYPEID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[RoomType]", "[RMTYPEID]", new[]
             {
                 "[NAME]",
                 "[SHORTNAME]"
@@ -331,7 +336,7 @@ namespace FIASUpdater
 
             //Stead
             SetProgressInfo("Обновление таблицы Stead");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[Stead]", "[STEADID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[Stead]", "[STEADID]", new[]
             {
                 "[STEADGUID]",
                 "[NUMBER]",
@@ -357,7 +362,7 @@ namespace FIASUpdater
 
             //StructureStatus
             SetProgressInfo("Обновление таблицы StructureStatus");
-            Utils.BuildUpdateSqlCommand(mainDB, tempDB, "[StructureStatus]", "[STRSTATID]", new string[]
+            Utils.BuildUpdateSqlCommand(mainDB.Connection, tempDB.Connection, "[StructureStatus]", "[STRSTATID]", new[]
             {
                 "[NAME]",
                 "[SHORTNAME]"
@@ -367,10 +372,8 @@ namespace FIASUpdater
 
 
         [STAThread]
-        private void LoadXMLToTempDB()
+        private void LoadXmlToTempDb()
         {
-            try
-            {
                 var objBL = new SQLXMLBulkLoad4
                 {
                     ConnectionString = temp_connStringPart,
@@ -387,19 +390,13 @@ namespace FIASUpdater
 
                     objBL.Execute(schemePath, xmlPath);
                 }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
         }
 
         private void btnLoadScheme_Click(object sender, System.EventArgs e)
         {
             using (var fbd = new FolderBrowserDialog())
             {
-                DialogResult result = fbd.ShowDialog();
+                var result = fbd.ShowDialog();
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
@@ -422,6 +419,7 @@ namespace FIASUpdater
         /// Обновляет словарь файлов.
         /// </summary>
         /// <param name="dict"></param>
+        /// <param name="folderPath"></param>
         /// <param name="maskPostfix"></param>
         /// <returns>Возвращает true, если словарь был обновлён, иначе false.</returns>
         private bool UpdateFileDictionary(out Dictionary<string, string> dict, string folderPath, string maskPostfix)
@@ -478,8 +476,7 @@ namespace FIASUpdater
         {
             var maxNew = new TimeSpan(10, 0, 0, 0, 0);
 
-            if (date > currentFiasVersion && date - currentFiasVersion < maxNew) return true;
-            return false;
+            return date > currentFiasVersion && date - currentFiasVersion < maxNew;
         }
 
 
@@ -487,7 +484,7 @@ namespace FIASUpdater
         {
             using (var fbd = new FolderBrowserDialog())
             {
-                DialogResult result = fbd.ShowDialog();
+                var result = fbd.ShowDialog();
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
@@ -512,16 +509,17 @@ namespace FIASUpdater
                     else
                     {
                         if (currentFiasVersion.CompareTo(newVer) >= 0)
-                            MessageBox.Show("База данных ФИАСа имеет такую же или более новую версию, чем ту, которую Вы пытаетесь загрузить.");
+                            MessageBox.Show(
+                                "База данных ФИАСа имеет такую же или более новую версию, чем ту, которую Вы пытаетесь загрузить.");
                         else
-                            MessageBox.Show("Версия, которую вы пытаетесь загрузить слишком новая для текущий базы данных. Возможно вы пропустили некоторые обновления.");
+                            MessageBox.Show(
+                                "Версия, которую вы пытаетесь загрузить слишком новая для текущий базы данных. Возможно вы пропустили некоторые обновления.");
                         return;
                     }
 
                     tbVersionDate.Text = newVer.ToShortDateString();
                     tbNewVersionPath.Text = fbd.SelectedPath;
                     if (!string.IsNullOrEmpty(tbSchemePath.Text) && !string.IsNullOrEmpty(tbNewVersionPath.Text)) btnUpdate.Enabled = true;
-
                 }
             }
         }

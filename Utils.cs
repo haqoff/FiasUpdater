@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data.Common;
 using System.Text;
+using System.Windows.Forms;
 
 namespace FIASUpdater
 {
@@ -23,72 +23,67 @@ namespace FIASUpdater
             return guidString;
         }
 
-
-        public static int BuildUpdateSqlCommand(FIASClassesDataContext mainDB, FIASClassesDataContext tempDB, string tableName, string key, IEnumerable<string> fields)
+        /// <summary>
+        /// Строит SQL-коммнаду.
+        /// </summary>
+        /// <param name="mainDb"></param>
+        /// <param name="tempDb"></param>
+        /// <param name="tableName"></param>
+        /// <param name="key"></param>
+        /// <param name="fields"></param>
+        /// <returns>Возвращает количество затронутых строк.</returns>
+        public static int BuildUpdateSqlCommand(DbConnection mainDb, DbConnection tempDb, string tableName, string key, string[] fields)
         {
-            int updatedRows = 0;
+            var updateSetFields = new StringBuilder();
+            var insertFields = new StringBuilder();
+            var insertValues = new StringBuilder();
 
-            var sb = new StringBuilder();
-            foreach (var field in fields)
+            insertFields.Append(key);
+            insertFields.Append(','); 
+
+            insertValues.Append("SOURCE.");
+            insertValues.Append(key);
+            insertValues.Append(',');
+
+            for (var i = 0; i < fields.Length; i++)
             {
-                if (sb.Length != 0) sb.Append(',');
-                sb.Append(string.Format("{0} = t2.{0}", field));
-            }
+                updateSetFields.Append(string.Format("TARGET.{0} = SOURCE.{0}", fields[i]));
 
-            string updateConstruct = String.Format("UPDATE {0}" +
-                    " SET {1} " +
-                    "FROM {2}.[dbo].{0} As t2 " +
-                    "WHERE {0}.{3} = t2.{3}", tableName, sb.ToString(), tempDB.Connection.Database, key);
+                insertFields.Append(',');
+                insertValues.Append(',');
 
-            sb.Clear();
-            foreach (var field in fields)
-            {
-                if (sb.Length != 0) sb.Append(',');
-                sb.Append(field);
-            }
+                insertFields.Append(fields[i]);
+                insertValues.Append(fields[i]);
 
-            sb.Append("," + key);
-            var fieldsString = sb.ToString();
-
-
-            sb.Clear();
-            foreach (var field in fields)
-            {
-                if (sb.Length != 0) sb.Append(',');
-                sb.Append("t2.");
-                sb.Append(field);
-            }
-            sb.Append(",t2." + key);
-
-            var fieldsWithNamedTable = sb.ToString();
-            string insertConstruct = string.Format("INSERT INTO {0} ({1}) SELECT {2} FROM {0} as t1 RIGHT JOIN {3}.dbo.{0} as t2 " +
-                "ON t1.{4} = t2.{4} WHERE t1.{4} IS NULL", tableName, fieldsString, fieldsWithNamedTable, tempDB.Connection.Database, key);
-
-            try
-            {
-                mainDB.Connection.Open();
-                using (var command = (SqlCommand)mainDB.Connection.CreateCommand())
+                if (i != fields.Length - 1)
                 {
-                    command.CommandTimeout = 0;
-
-                    command.CommandText = updateConstruct;
-                    updatedRows = command.ExecuteNonQuery();
-
-                    command.CommandText = insertConstruct;
-                    updatedRows += command.ExecuteNonQuery();
-
-                    mainDB.Connection.Close();
+                    updateSetFields.Append(',');
                 }
             }
-            catch (Exception ex)
+
+            var res = 0;
+            try
             {
-                throw ex;
+                using (var cmd = mainDb.CreateCommand())
+                {
+                    cmd.CommandText = string.Format(
+                        "MERGE [{0}].[dbo].[{1}] AS TARGET\r\nUSING [{2}].[dbo].[{1}] AS SOURCE \r\nON (TARGET.{3} = SOURCE.{3}) \r\nWHEN MATCHED THEN \r\nUPDATE SET {4} \r\nWHEN NOT MATCHED BY TARGET THEN \r\nINSERT ({5}) \r\nVALUES ({6});\r\nSELECT @@ROWCOUNT;\r\nGO",
+                        mainDb.Database, tableName, tempDb.Database, key, updateSetFields, insertFields, insertValues);
+
+                    cmd.CommandTimeout = 0;
+
+                    mainDb.Open();
+                    cmd.Prepare();
+                    res = (int) cmd.ExecuteScalar();
+                    mainDb.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Ошибка во время выполнения запроса.");
             }
 
-
-            return updatedRows;
+            return res;
         }
-
-
     }
 }

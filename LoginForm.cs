@@ -38,8 +38,8 @@ namespace FIASUpdater
 
             fiasDataContext.CommandTimeout = 0;
 
-            var tempConnOleDBPart = String.Format("Provider=sqloledb;server={0};database={1};user id={2};password={3};persist security info=True;Connect Timeout=30", tbServer.Text, fias_tempName, tbUserName.Text, tbPassword.Text);
-            MainForm form = new MainForm(fiasDataContext, fias_tempDataContext, tempConnOleDBPart);
+            var tempConnOleDbPart = String.Format("Provider=sqloledb;server={0};database={1};user id={2};password={3};persist security info=True;Connect Timeout=30", tbServer.Text, fias_tempName, tbUserName.Text, tbPassword.Text);
+            MainForm form = new MainForm(fiasDataContext, fias_tempDataContext, tempConnOleDbPart);
             btnLogin.Enabled = true;
 
             Hide();
