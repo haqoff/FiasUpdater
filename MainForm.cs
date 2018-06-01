@@ -14,8 +14,8 @@ namespace FIASUpdater
 {
     public partial class MainForm : Form
     {
-        private FIASClassesDataContext mainDB;
-        private FIASClassesDataContext tempDB;
+        private readonly FIASClassesDataContext mainDB;
+        private readonly FIASClassesDataContext tempDB;
 
         private TimeSpan timeLeft;
 
@@ -26,15 +26,11 @@ namespace FIASUpdater
         private DateTime newVer;
         private string temp_connStringPart;
 
-        public object BundingFlags { get; private set; }
-
         public MainForm(FIASClassesDataContext mainDB, FIASClassesDataContext tempDB, string temp_connStringPart)
         {
             this.mainDB = mainDB;
             this.tempDB = tempDB;
             this.temp_connStringPart = temp_connStringPart;
-
-            timeLeft = new TimeSpan();
 
             versionFiles = new Dictionary<string, string>();
 
